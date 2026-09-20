@@ -7,7 +7,6 @@ import {
   X,
   FileSpreadsheet,
   Download,
-  Sparkles,
   Info,
   Search,
   Lock,
@@ -22,7 +21,8 @@ import {
   ApplicationStatus,
 } from './types';
 import { INITIAL_LISTS } from './data/initialData';
-import { Header } from './components/Header';
+import { Sidebar } from './components/Sidebar';
+import { TopBar } from './components/TopBar';
 import { MainDashboard } from './components/MainDashboard';
 import { ApplicationTracker } from './components/ApplicationTracker';
 import { FollowUpCenter } from './components/FollowUpCenter';
@@ -49,6 +49,7 @@ import { isDateOverdue, isDateToday } from './utils/calculations';
 export default function App() {
   // Navigation State
   const [currentTab, setCurrentTab] = useState<SheetTab>('dashboard');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Auth State
   const [user, setUser] = useState<any>(null);
@@ -182,12 +183,11 @@ export default function App() {
         setShowPopupBlockedModal(false);
         setToastMessage({
           type: 'success',
-          text: `Signed in as ${result.user.displayName || result.user.email}. Your private application records are now active.`,
+          text: `Signed in as ${result.user.displayName || result.user.email}. Your personal applications are loaded.`,
         });
       }
     } catch (err: any) {
       if (isPopupBlockedError(err)) {
-        console.warn('Google Sign-in popup blocked or preview iframe');
         setShowPopupBlockedModal(true);
       } else {
         console.error('Sign in error:', err);
@@ -378,9 +378,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#003049] flex flex-col font-sans selection:bg-[#FDF0D5] selection:text-[#780000]">
-      {/* 1. Sleek 3-Section Header Navbar */}
-      <Header
+    <div className="min-h-screen bg-white text-[#003049] flex font-sans selection:bg-[#FDF0D5] selection:text-[#780000]">
+      {/* 1. Left Sidebar Navigation */}
+      <Sidebar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         onOpenAddModal={handleOpenAddModal}
@@ -394,162 +394,175 @@ export default function App() {
         user={user}
         onSignIn={handleGoogleSignIn}
         onSignOut={handleSignOut}
-        searchQuery={globalSearchQuery}
-        onSearchChange={setGlobalSearchQuery}
-        applications={applications}
-        onSelectApplication={handleSelectApplication}
+        isOpenMobile={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
-      {/* 2. Login Prompt Banner for unauthenticated private storage */}
-      {!user && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-[#003049] shadow-2xs">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center border border-gray-200 shrink-0 text-[#780000]">
-                <Lock className="w-4 h-4" />
+      {/* 2. Main Content Workspace */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {/* Sleek Top Bar */}
+        <TopBar
+          currentTab={currentTab}
+          onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+          onOpenAddModal={handleOpenAddModal}
+          searchQuery={globalSearchQuery}
+          onSearchChange={setGlobalSearchQuery}
+          applications={applications}
+          onSelectApplication={handleSelectApplication}
+          onSelectTab={setCurrentTab}
+        />
+
+        {/* Login Prompt Banner for unauthenticated users */}
+        {!user && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-[#003049] shadow-2xs">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center border border-gray-200 shrink-0 text-[#780000]">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-[#003049]">Private & Secure Career Tracker</p>
+                  <p className="text-gray-500">
+                    Sign in with Google to save your personal job applications, attached CV files, and cover letters securely to your account.
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-bold text-sm text-[#003049]">Private & Secure Career Tracker</p>
-                <p className="text-gray-500">
-                  Sign in with Google to keep your personal job applications, CV files, and cover letters saved permanently to your private account.
-                </p>
+              <button
+                onClick={() => handleGoogleSignIn()}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#003049] hover:bg-[#002035] text-white font-semibold transition-all shadow-xs shrink-0 cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In with Google</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Global Search Filter Banner */}
+        {globalSearchQuery.trim() && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-3">
+            <div className="flex items-center justify-between px-4 py-2 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-[#003049] shadow-2xs">
+              <div className="flex items-center gap-2">
+                <Search className="w-3.5 h-3.5 text-[#780000]" />
+                <span>
+                  Filtered by <strong className="text-[#780000]">"{globalSearchQuery}"</strong> — showing{' '}
+                  <strong className="text-[#003049]">{filteredApplications.length}</strong> of{' '}
+                  {applications.length} applications
+                </span>
               </div>
+              <button
+                onClick={() => setGlobalSearchQuery('')}
+                className="inline-flex items-center gap-1 font-semibold text-[11px] text-[#780000] hover:text-[#c1121f] transition-colors cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Clear Filter</span>
+              </button>
             </div>
-            <button
-              onClick={() => handleGoogleSignIn()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#003049] hover:bg-[#002035] text-white font-semibold transition-all shadow-xs shrink-0 cursor-pointer"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In with Google</span>
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* 3. Global Filter Notice Banner */}
-      {globalSearchQuery.trim() && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-3">
-          <div className="flex items-center justify-between px-4 py-2 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-[#003049] shadow-2xs">
-            <div className="flex items-center gap-2">
-              <Search className="w-3.5 h-3.5 text-[#780000] shrink-0" />
-              <span>
-                Filtered by <strong className="text-[#780000]">"{globalSearchQuery}"</strong> — showing{' '}
-                <strong className="text-[#003049]">{filteredApplications.length}</strong> of{' '}
-                {applications.length} applications
-              </span>
+        {/* Notification / Toast Banner */}
+        {toastMessage && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+            <div
+              className={`rounded-2xl p-4 border flex items-center justify-between gap-4 shadow-xs transition-all ${
+                toastMessage.type === 'success'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  : toastMessage.type === 'error'
+                  ? 'bg-red-50 border-red-200 text-red-900'
+                  : 'bg-blue-50 border-blue-200 text-blue-900'
+              }`}
+            >
+              <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
+                {toastMessage.type === 'success' ? (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                ) : toastMessage.type === 'error' ? (
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+                ) : (
+                  <Info className="w-5 h-5 text-blue-600 shrink-0" />
+                )}
+                <span>{toastMessage.text}</span>
+                {toastMessage.actionUrl && (
+                  <a
+                    href={toastMessage.actionUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-bold underline ml-2 inline-flex items-center gap-1 hover:opacity-80"
+                  >
+                    {toastMessage.actionLabel || 'View Document'}
+                  </a>
+                )}
+              </div>
+
+              <button
+                onClick={() => setToastMessage(null)}
+                className="text-xs p-1 hover:opacity-70 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              onClick={() => setGlobalSearchQuery('')}
-              className="inline-flex items-center gap-1 font-semibold text-[11px] text-[#780000] hover:text-[#c1121f] transition-colors cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>Clear Filter</span>
-            </button>
           </div>
-        </div>
-      )}
-
-      {/* 4. Notification / Toast Banner */}
-      {toastMessage && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
-          <div
-            className={`rounded-2xl p-4 border flex items-center justify-between gap-4 shadow-xs transition-all ${
-              toastMessage.type === 'success'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                : toastMessage.type === 'error'
-                ? 'bg-red-50 border-red-200 text-red-900'
-                : 'bg-blue-50 border-blue-200 text-blue-900'
-            }`}
-          >
-            <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
-              {toastMessage.type === 'success' ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              ) : toastMessage.type === 'error' ? (
-                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
-              ) : (
-                <Info className="w-5 h-5 text-blue-600 shrink-0" />
-              )}
-              <span>{toastMessage.text}</span>
-              {toastMessage.actionUrl && (
-                <a
-                  href={toastMessage.actionUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-bold underline ml-2 inline-flex items-center gap-1 hover:opacity-80"
-                >
-                  {toastMessage.actionLabel || 'View Document'}
-                </a>
-              )}
-            </div>
-
-            <button
-              onClick={() => setToastMessage(null)}
-              className="text-xs p-1 hover:opacity-70 rounded-lg cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 5. Main Sheet Content Workspace */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6">
-        {currentTab === 'dashboard' && (
-          <MainDashboard
-            applications={filteredApplications}
-            onSelectTab={setCurrentTab}
-            onSelectApplication={handleSelectApplication}
-            onQuickStatusChange={handleUpdateStatus}
-            onDeleteApplication={handleDeleteApplication}
-          />
         )}
 
-        {currentTab === 'applications' && (
-          <ApplicationTracker
-            applications={applications}
-            lists={lists}
-            onSelectApplication={handleSelectApplication}
-            onOpenAddModal={handleOpenAddModal}
-            onUpdateApplicationStatus={handleUpdateStatus}
-            onDeleteApplication={handleDeleteApplication}
-            searchTerm={globalSearchQuery}
-            onSearchChange={setGlobalSearchQuery}
-          />
-        )}
+        {/* Main Active Tab Content */}
+        <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-6">
+          {currentTab === 'dashboard' && (
+            <MainDashboard
+              applications={filteredApplications}
+              onSelectTab={setCurrentTab}
+              onSelectApplication={handleSelectApplication}
+              onQuickStatusChange={handleUpdateStatus}
+              onDeleteApplication={handleDeleteApplication}
+            />
+          )}
 
-        {currentTab === 'followup' && (
-          <FollowUpCenter
-            applications={filteredApplications}
-            onSelectApplication={handleSelectApplication}
-            onUpdateApplication={handleSaveApplication}
-          />
-        )}
+          {currentTab === 'applications' && (
+            <ApplicationTracker
+              applications={applications}
+              lists={lists}
+              onSelectApplication={handleSelectApplication}
+              onOpenAddModal={handleOpenAddModal}
+              onUpdateApplicationStatus={handleUpdateStatus}
+              onDeleteApplication={handleDeleteApplication}
+              searchTerm={globalSearchQuery}
+              onSearchChange={setGlobalSearchQuery}
+            />
+          )}
 
-        {currentTab === 'resumes' && (
-          <ResumeLibrary
-            resumes={resumes}
-            applications={applications}
-            onAddResume={(res) => setResumes([...resumes, res])}
-            onUpdateResume={(res) =>
-              setResumes(resumes.map((r) => (r.id === res.id ? res : r)))
-            }
-            onDeleteResume={(id) =>
-              setResumes(resumes.filter((r) => r.id !== id))
-            }
-            onFilterByResume={handleFilterByResume}
-          />
-        )}
+          {currentTab === 'followup' && (
+            <FollowUpCenter
+              applications={filteredApplications}
+              onSelectApplication={handleSelectApplication}
+              onUpdateApplication={handleSaveApplication}
+            />
+          )}
 
-        {currentTab === 'analytics' && (
-          <AnalyticsView applications={filteredApplications} />
-        )}
+          {currentTab === 'resumes' && (
+            <ResumeLibrary
+              resumes={resumes}
+              applications={applications}
+              onAddResume={(res) => setResumes([...resumes, res])}
+              onUpdateResume={(res) =>
+                setResumes(resumes.map((r) => (r.id === res.id ? res : r)))
+              }
+              onDeleteResume={(id) =>
+                setResumes(resumes.filter((r) => r.id !== id))
+              }
+              onFilterByResume={handleFilterByResume}
+            />
+          )}
 
-        {currentTab === 'lists' && (
-          <ListsSettingsView lists={lists} onUpdateLists={setLists} />
-        )}
-      </main>
+          {currentTab === 'analytics' && (
+            <AnalyticsView applications={filteredApplications} />
+          )}
 
-      {/* 6. Application Add / Edit Dossier Modal */}
+          {currentTab === 'lists' && (
+            <ListsSettingsView lists={lists} onUpdateLists={setLists} />
+          )}
+        </main>
+      </div>
+
+      {/* Application Add / Edit Dossier Modal */}
       <ApplicationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -559,51 +572,13 @@ export default function App() {
         onDelete={handleDeleteApplication}
       />
 
-      {/* 7. Pop-up Blocked Guidance Modal */}
+      {/* Pop-up Blocked Guidance Modal */}
       <PopupBlockedModal
         isOpen={showPopupBlockedModal}
         onClose={() => setShowPopupBlockedModal(false)}
         onRetry={() => handleGoogleSignIn(true)}
         onExportCsv={handleExportCSV}
       />
-
-      {/* 8. Minimalist Elegant Footer */}
-      <footer className="bg-white border-t border-gray-100 py-5 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-          <div className="flex items-center gap-2">
-            <span className="font-serif font-bold text-[#003049] text-sm">JOB SEARCH HQ</span>
-            <span>•</span>
-            <span>Private Career Command Center</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setCurrentTab('lists')}
-              className="hover:text-[#003049] transition-colors cursor-pointer"
-            >
-              Validation Rules
-            </button>
-            <button
-              onClick={handleExportCSV}
-              className="hover:text-[#003049] transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5 text-[#780000]" />
-              Export CSV
-            </button>
-            {createdSheetUrl && (
-              <a
-                href={createdSheetUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-emerald-700 hover:underline flex items-center gap-1 font-semibold"
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5" />
-                Live Google Sheet ↗
-              </a>
-            )}
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
