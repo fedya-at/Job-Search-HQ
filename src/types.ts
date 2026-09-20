@@ -65,6 +65,9 @@ export interface Application {
   // Application Information
   resumeUsed: string;
   coverLetter: CoverLetterType;
+  coverLetterText?: string;
+  cvFileName?: string;
+  cvFileData?: string;
   status: ApplicationStatus;
   origin: ApplicationOrigin;
 

@@ -432,16 +432,35 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                         </td>
 
                         {/* Resume Used & Cover Letter */}
-                        <td className="py-3 px-3 min-w-[150px]">
-                          <div className="text-[#4A423A] truncate font-medium max-w-[140px]">
-                            {app.resumeUsed ? (
-                              app.resumeUsed.replace('📄 ', '')
+                        <td className="py-3 px-3 min-w-[160px]">
+                          <div className="flex items-center gap-1.5 text-[#003049] truncate font-medium max-w-[150px]">
+                            {app.cvFileName ? (
+                              app.cvFileData ? (
+                                <a
+                                  href={app.cvFileData}
+                                  download={app.cvFileName}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-xs text-[#003049] hover:text-[#780000] hover:underline inline-flex items-center gap-1 font-semibold truncate"
+                                  title={`Download ${app.cvFileName}`}
+                                >
+                                  <span>📄 {app.cvFileName}</span>
+                                </a>
+                              ) : (
+                                <span className="truncate">📄 {app.cvFileName}</span>
+                              )
+                            ) : app.resumeUsed ? (
+                              <span>{app.resumeUsed.replace('📄 ', '')}</span>
                             ) : (
-                              <span className="text-[#C4B9AF]">—</span>
+                              <span className="text-gray-400">—</span>
                             )}
                           </div>
-                          <div className="text-[10px] text-[#8C8074]">
-                            Cover: <span className="font-semibold">{app.coverLetter}</span>
+                          <div className="text-[10px] text-gray-500 mt-0.5 flex items-center gap-1">
+                            <span>Cover: <strong>{app.coverLetter}</strong></span>
+                            {app.coverLetterText && (
+                              <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1 rounded font-medium">
+                                Text saved
+                              </span>
+                            )}
                           </div>
                         </td>
 

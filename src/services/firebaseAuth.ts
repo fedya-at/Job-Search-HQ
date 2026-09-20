@@ -6,7 +6,10 @@ import {
   onAuthStateChanged,
   User,
   signOut,
+  setPersistence,
+  browserLocalPersistence,
 } from 'firebase/auth';
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
@@ -17,16 +20,25 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase App singleton safely
-const app = !getApps().length && firebaseConfig.apiKey ? initializeApp(firebaseConfig) : (getApps().length ? getApp() : initializeApp(firebaseConfig));
+const app = !getApps().length && firebaseConfig.apiKey
+  ? initializeApp(firebaseConfig)
+  : (getApps().length ? getApp() : initializeApp(firebaseConfig));
 export const auth = getAuth(app);
+
+// Enable local persistence so user session stays logged in across browser reloads
+try {
+  setPersistence(auth, browserLocalPersistence).catch(() => {});
+} catch (e) {
+  // Ignored in non-browser environments
+}
 
 const provider = new GoogleAuthProvider();
 // Google Workspace Scopes requested
 provider.addScope('https://www.googleapis.com/auth/spreadsheets');
 provider.addScope('https://www.googleapis.com/auth/drive.file');
 
-// In-memory token cache (never in localStorage/sessionStorage per security guidelines)
-let cachedAccessToken: string | null = null;
+// Cache access token in memory / session storage for seamless Google Sheets syncing
+let cachedAccessToken: string | null = typeof window !== 'undefined' ? sessionStorage.getItem('jshq_google_token') : null;
 let isSigningIn = false;
 
 export const isInIframe = (): boolean => {
@@ -58,15 +70,13 @@ export const initAuth = (
 ) => {
   return onAuthStateChanged(auth, async (user: User | null) => {
     if (user) {
-      if (cachedAccessToken) {
-        if (onAuthSuccess) onAuthSuccess(user, cachedAccessToken);
-      } else if (!isSigningIn) {
-        // User is logged in via Firebase session, but needs access token refresh via popup
-        cachedAccessToken = null;
-        if (onAuthFailure) onAuthFailure();
-      }
+      const token = cachedAccessToken || (typeof window !== 'undefined' ? sessionStorage.getItem('jshq_google_token') : null) || '';
+      if (onAuthSuccess) onAuthSuccess(user, token);
     } else {
       cachedAccessToken = null;
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('jshq_google_token');
+      }
       if (onAuthFailure) onAuthFailure();
     }
   });
@@ -90,6 +100,9 @@ export const googleSignIn = async (
       throw new Error('Failed to obtain Google access token from credentials');
     }
     cachedAccessToken = credential.accessToken;
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('jshq_google_token', credential.accessToken);
+    }
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
     if (isPopupBlockedError(error)) {
@@ -105,11 +118,13 @@ export const googleSignIn = async (
 
 // Synchronous accessor to avoid losing user-gesture activation context
 export const getAccessToken = (): string | null => {
-  return cachedAccessToken;
+  return cachedAccessToken || (typeof window !== 'undefined' ? sessionStorage.getItem('jshq_google_token') : null);
 };
 
 export const logout = async () => {
   await signOut(auth);
   cachedAccessToken = null;
+  if (typeof window !== 'undefined') {
+    sessionStorage.removeItem('jshq_google_token');
+  }
 };
-
