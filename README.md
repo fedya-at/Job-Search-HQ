@@ -49,5 +49,5 @@ A modern, elegant job application tracker and career command center spreadsheet 
 
 If using Google Sign-In and Google Sheets sync:
 1. Open the [Firebase Console](https://console.firebase.google.com/).
-2. Select your project (`gen-lang-client-0560772262`).
+2. Select your Firebase project.
 3. Under **Authentication > Settings > Authorized Domains**, add your Netlify domain (e.g. `your-site.netlify.app`).
