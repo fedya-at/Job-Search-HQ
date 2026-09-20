@@ -50,6 +50,7 @@ export default function App() {
   // Navigation State
   const [currentTab, setCurrentTab] = useState<SheetTab>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Auth State
   const [user, setUser] = useState<any>(null);
@@ -396,6 +397,8 @@ export default function App() {
         onSignOut={handleSignOut}
         isOpenMobile={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       {/* 2. Main Content Workspace */}
@@ -410,6 +413,8 @@ export default function App() {
           applications={applications}
           onSelectApplication={handleSelectApplication}
           onSelectTab={setCurrentTab}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
 
         {/* Login Prompt Banner for unauthenticated users */}

@@ -5,14 +5,14 @@
     --color-wine: #780000;
     --color-ruby: #c1121f;
     --color-cream: #fdf0d5;
-    --color-navy: #003049;
-    --color-denim: #669bbc;
+    --color-navy: #002236;
+    --color-denim: #4b7b99;
   }
 
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     background-color: #ffffff;
-    color: #003049;
+    color: #0f172a; /* Darker Slate 900 for high readability */
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
@@ -20,7 +20,7 @@
 
   h1, h2, h3, .font-serif, .font-serif-heading {
     font-family: 'Lobster Two', cursive, Georgia, serif;
-    color: #003049;
+    color: #020617; /* Deep Slate 950 for bold high-contrast headings */
   }
 
   .font-display {
@@ -28,26 +28,26 @@
   }
 }
 
-/* Custom scrollbars for clean Pinterest/Notion feel */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FDF0D5;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C4D3E0;
+  background: #94a3b8;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #669BBC;
+  background: #64748b;
 }
 
-/* Official Google Sign-In button styles required by Google Identity guidelines */
+/* Official Google Sign-In button styles */
 .gsi-material-button {
   user-select: none;
   background-color: #ffffff;
@@ -58,7 +58,7 @@
   cursor: pointer;
   font-family: 'Plus Jakarta Sans', Roboto, arial, sans-serif;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   height: 38px;
   letter-spacing: 0.25px;
   outline: none;
