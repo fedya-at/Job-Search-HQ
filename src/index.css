@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-wine: #780000;
+    --color-ruby: #c1121f;
+    --color-cream: #fdf0d5;
+    --color-navy: #003049;
+    --color-denim: #669bbc;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #FDF9F0;
+    color: #003049;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .font-serif-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: #003049;
+  }
+
+  .font-display {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+/* Custom scrollbars for clean Pinterest/Notion feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FDF0D5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4D3E0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #669BBC;
+}
+
+/* Official Google Sign-In button styles required by Google Identity guidelines */
+.gsi-material-button {
+  user-select: none;
+  background-color: #ffffff;
+  border: 1px solid #747775;
+  border-radius: 9999px;
+  box-sizing: border-box;
+  color: #1f1f1f;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', Roboto, arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  height: 38px;
+  letter-spacing: 0.25px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 16px;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gsi-material-button:hover {
+  background-color: #f8fafc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-color: #5e6160;
+}
+
+.gsi-material-button-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.gsi-material-button-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
