@@ -141,13 +141,12 @@ export const Header: React.FC<HeaderProps> = ({
       badge: overdueCount + todayCount > 0 ? overdueCount + todayCount : undefined,
     },
     { id: 'resumes', label: 'RESUME LIBRARY', icon: FileText },
-    { id: 'contacts', label: 'NETWORKING', icon: Users },
     { id: 'analytics', label: 'INSIGHTS', icon: BarChart3 },
     { id: 'lists', label: 'LISTS', icon: SlidersHorizontal },
   ];
 
   return (
-    <header className="bg-[#FDF9F0] border-b border-[#EEDFCA] sticky top-0 z-30 shadow-xs">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-2xs">
       {/* Top Banner with Brand, Title, and Primary Controls */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -511,8 +510,8 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Sheet Tabs Bar (Spreadsheet Tab bar styled with Pinterest/Notion warmth) */}
-        <div className="mt-4 flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar border-t border-[#EEDFCA] pt-3">
+        {/* Sheet Tabs Bar */}
+        <div className="mt-4 flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar border-t border-gray-200 pt-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;

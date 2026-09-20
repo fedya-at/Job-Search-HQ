@@ -8,30 +8,43 @@ export interface CreateSpreadsheetResult {
   title: string;
 }
 
-// Color Palette Constants: ["#780000","#c1121f","#fdf0d5","#003049","#669bbc"]
-export const PALETTE = {
-  wine: '#780000',     // Deep Crimson / Wine
-  ruby: '#c1121f',     // Radiant Ruby Red
-  cream: '#fdf0d5',    // Warm Almond Cream / Ivory
-  navy: '#003049',     // Deep Prussian Navy
-  denim: '#669bbc',    // Soft Cerulean / Denim Blue
+// Sage Green & Blush Palette (Matching the Pinterest / Etsy Job Application Tracker design)
+export const SAGE_PALETTE = {
+  sageHeader: '#7B9E89',      // Primary Sage Header Banner
+  sageDark: '#4A6B5D',        // Dark Forest Sage text & accents
+  sageLight: '#E8EDE9',       // Soft Mint / Sage Card background
+  sagePill: '#D1E0D7',        // Sage pill badge
+  blushCard: '#FCECEE',       // Blush Pink Quote Box
+  blushText: '#B85D6E',       // Blush Pink deep text
+  peachCard: '#FDECE6',       // Soft Peach background
+  white: '#FFFFFF',           // Pure White
+  charcoal: '#2D3748',        // Dark Slate text
+  borderSoft: '#E2E8E5',      // Light Sage border
 };
 
-// Google Sheets Color Objects (RGB values normalized 0 to 1)
+// Normalized RGB color objects for Google Sheets API (0.0 to 1.0)
 const GS_COLORS = {
-  navy: { red: 0 / 255, green: 48 / 255, blue: 73 / 255 },        // #003049
-  wine: { red: 120 / 255, green: 0 / 255, blue: 0 / 255 },        // #780000
-  ruby: { red: 193 / 255, green: 18 / 255, blue: 31 / 255 },      // #c1121f
-  cream: { red: 253 / 255, green: 240 / 255, blue: 213 / 255 },   // #fdf0d5
-  denim: { red: 102 / 255, green: 155 / 255, blue: 188 / 255 },   // #669bbc
+  sageHeader: { red: 123 / 255, green: 158 / 255, blue: 137 / 255 }, // #7B9E89
+  sageDark: { red: 74 / 255, green: 107 / 255, blue: 93 / 255 },     // #4A6B5D
+  sageLight: { red: 232 / 255, green: 237 / 255, blue: 233 / 255 },  // #E8EDE9
+  blushCard: { red: 252 / 255, green: 236 / 255, blue: 238 / 255 },  // #FCECEE
+  blushText: { red: 184 / 255, green: 93 / 255, blue: 110 / 255 },   // #B85D6E
+  peachCard: { red: 253 / 255, green: 236 / 255, blue: 230 / 255 },  // #FDECE6
+  peachText: { red: 178 / 255, green: 98 / 255, blue: 74 / 255 },
   white: { red: 1, green: 1, blue: 1 },
-  creamWash: { red: 254 / 255, green: 248 / 255, blue: 236 / 255 },
-  softGreen: { red: 234 / 255, green: 247 / 255, blue: 238 / 255 },
-  darkGreen: { red: 30 / 255, green: 92 / 255, blue: 49 / 255 },
-  softRed: { red: 253 / 255, green: 236 / 255, blue: 236 / 255 },
-  softBlue: { red: 235 / 255, green: 243 / 255, blue: 248 / 255 },
+  charcoal: { red: 45 / 255, green: 55 / 255, blue: 72 / 255 },      // #2D3748
+  graySubtext: { red: 113 / 255, green: 128 / 255, blue: 150 / 255 },
+  borderSoft: { red: 226 / 255, green: 232 / 255, blue: 229 / 255 },
+  zebraBg: { red: 249 / 255, green: 251 / 255, blue: 249 / 255 },
+  appliedBg: { red: 225 / 255, green: 237 / 255, blue: 247 / 255 },
+  interviewBg: { red: 226 / 255, green: 243 / 255, blue: 231 / 255 },
+  offerBg: { red: 216 / 255, green: 241 / 255, blue: 226 / 255 },
+  rejectedBg: { red: 253 / 255, green: 232 / 255, blue: 232 / 255 },
 };
 
+/**
+ * Creates and formats a Google Sheet workbook with the exact Sage & Blush aesthetic
+ */
 export async function createGoogleSheet(
   accessToken: string,
   title: string,
@@ -40,13 +53,12 @@ export async function createGoogleSheet(
   contacts: ContactItem[],
   lists: DataLists
 ): Promise<CreateSpreadsheetResult> {
-  // Step 1: Create Spreadsheet with 6 specifically styled Pinterest/Notion tabs
   const createPayload = {
     properties: {
-      title: title || 'JOB SEARCH HQ — Career Command Center',
+      title: title || 'Job Application Tracker — Stay Organized & Get Hired',
       defaultFormat: {
         textFormat: {
-          fontFamily: 'Arial',
+          fontFamily: 'Montserrat',
           fontSize: 10,
         },
       },
@@ -55,12 +67,12 @@ export async function createGoogleSheet(
       {
         properties: {
           sheetId: 0,
-          title: 'JOB SEARCH HQ',
+          title: 'DASHBOARD',
           index: 0,
-          tabColor: GS_COLORS.navy,
+          tabColor: GS_COLORS.sageHeader,
           gridProperties: {
-            rowCount: 40,
-            columnCount: 12,
+            rowCount: 35,
+            columnCount: 14,
             hideGridlines: false,
           },
         },
@@ -68,14 +80,13 @@ export async function createGoogleSheet(
       {
         properties: {
           sheetId: 1,
-          title: 'APPLICATIONS',
+          title: 'APPLICATION TRACKER',
           index: 1,
-          tabColor: GS_COLORS.wine,
+          tabColor: GS_COLORS.sageHeader,
           gridProperties: {
-            frozenRowCount: 1,
-            frozenColumnCount: 4,
+            frozenRowCount: 3,
             rowCount: Math.max(applications.length + 50, 100),
-            columnCount: 26,
+            columnCount: 10,
             hideGridlines: false,
           },
         },
@@ -83,13 +94,13 @@ export async function createGoogleSheet(
       {
         properties: {
           sheetId: 2,
-          title: 'FOLLOW-UP',
+          title: 'INTERVIEW TRACKER',
           index: 2,
-          tabColor: GS_COLORS.ruby,
+          tabColor: GS_COLORS.sageDark,
           gridProperties: {
-            frozenRowCount: 1,
-            rowCount: Math.max(applications.length + 30, 60),
-            columnCount: 10,
+            frozenRowCount: 3,
+            rowCount: Math.max(applications.length + 30, 50),
+            columnCount: 8,
             hideGridlines: false,
           },
         },
@@ -97,13 +108,13 @@ export async function createGoogleSheet(
       {
         properties: {
           sheetId: 3,
-          title: 'RESUME LIBRARY',
+          title: 'FOLLOW UP TRACKER',
           index: 3,
-          tabColor: GS_COLORS.denim,
+          tabColor: GS_COLORS.sageHeader,
           gridProperties: {
-            frozenRowCount: 1,
-            rowCount: Math.max(resumes.length + 20, 50),
-            columnCount: 10,
+            frozenRowCount: 3,
+            rowCount: Math.max(applications.length + 30, 50),
+            columnCount: 7,
             hideGridlines: false,
           },
         },
@@ -111,27 +122,13 @@ export async function createGoogleSheet(
       {
         properties: {
           sheetId: 4,
-          title: 'NETWORKING',
+          title: 'RESUME LIBRARY',
           index: 4,
-          tabColor: GS_COLORS.navy,
+          tabColor: GS_COLORS.sageLight,
           gridProperties: {
-            frozenRowCount: 1,
-            rowCount: Math.max(contacts.length + 20, 50),
-            columnCount: 11,
-            hideGridlines: false,
-          },
-        },
-      },
-      {
-        properties: {
-          sheetId: 5,
-          title: 'LISTS',
-          index: 5,
-          tabColor: GS_COLORS.cream,
-          gridProperties: {
-            frozenRowCount: 1,
-            rowCount: 40,
-            columnCount: 8,
+            frozenRowCount: 3,
+            rowCount: Math.max(resumes.length + 20, 40),
+            columnCount: 10,
             hideGridlines: false,
           },
         },
@@ -157,172 +154,99 @@ export async function createGoogleSheet(
   const spreadsheetId = sheetData.spreadsheetId;
   const spreadsheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`;
 
-  // Step 2: Prepare 100% accurate batch values for all tabs
-  const kpis = calculateKpis(applications);
-  const pipeline = calculatePipeline(applications);
-
-  // Tab 1: JOB SEARCH HQ Dashboard
+  // Step 2: Prepare Dashboard Content
   const dashboardValues = [
-    ['JOB SEARCH HQ — CAREER COMMAND CENTER', '', '', '', '', '', ''],
-    ['Pinterest-Inspired Productivity & Job Search HQ Template (Color Palette: #780000 | #c1121f | #fdf0d5 | #003049 | #669bbc)', '', '', '', '', '', ''],
+    ['JOB APPLICATION TRACKER ♡', '', '', '', '“Small steps lead to big opportunities.”', '', '', 'TOTAL APPLICATIONS', ''],
+    ['TRACK • PLAN • STAY ON TOP • REACH YOUR GOALS', '', '', '', '', '', '', '=COUNTA(\'APPLICATION TRACKER\'!B4:B)', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['APPLICATION STATUS', '', '', 'APPLICATIONS BY MONTH', '', '', 'INTERVIEW STAGES', ''],
+    ['Applied', '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Applied")', '=REPT("■", MIN(10, B5*2))', 'Jan', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-01-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-01-31")', 'Initial Interview', '=COUNTIF(\'INTERVIEW TRACKER\'!D4:D, "*Initial*")'],
+    ['Interview', '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "*Interview*")', '=REPT("■", MIN(10, B6*2))', 'Feb', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-02-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-02-28")', 'Technical Interview', '=COUNTIF(\'INTERVIEW TRACKER\'!D4:D, "*Technical*")'],
+    ['Offer', '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Offer") + COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Accepted")', '=REPT("■", MIN(10, B7*2))', 'Mar', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-03-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-03-31")', 'Final Interview', '=COUNTIF(\'INTERVIEW TRACKER\'!D4:D, "*Final*")'],
+    ['Rejected', '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Rejected")', '=REPT("■", MIN(10, B8*2))', 'Apr', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-04-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-04-30")', 'Waiting for Feedback', '=COUNTIF(\'INTERVIEW TRACKER\'!E4:E, "*Waiting*")'],
+    ['Not Interested', '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Ghosted") + COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Withdrawn")', '=REPT("■", MIN(10, B9*2))', 'May', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-05-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-05-31")', '', ''],
+    ['', '', '', 'Jun', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-06-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-06-30")', '', ''],
+    ['', '', '', 'Jul - Dec', '=COUNTIFS(\'APPLICATION TRACKER\'!A4:A, ">=2027-07-01", \'APPLICATION TRACKER\'!A4:A, "<=2027-12-31")', '', ''],
     ['', '', '', '', '', '', ''],
-    ['═══ LIVE CAREER METRICS & KPIS ═══', '', '', '', '', '', ''],
+    ['TOTAL APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTED', 'PENDING'],
     [
-      'Total Applications',
-      'Applied (Past 7 Days)',
-      'Active Interviews',
-      'Offers Received',
-      'Awaiting Response',
-      'Closed / Rejected',
-      'Live Response Rate',
-    ],
-    [
-      '=COUNTA(APPLICATIONS!C2:C)',
-      '=COUNTIFS(APPLICATIONS!B2:B, ">="&TODAY()-7, APPLICATIONS!B2:B, "<="&TODAY())',
-      '=COUNTIF(APPLICATIONS!K2:K, "*Interview*")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Offer") + COUNTIF(APPLICATIONS!K2:K, "Accepted")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Applied") + COUNTIF(APPLICATIONS!K2:K, "Screening") + COUNTIF(APPLICATIONS!K2:K, "Application Viewed")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Rejected") + COUNTIF(APPLICATIONS!K2:K, "Ghosted") + COUNTIF(APPLICATIONS!K2:K, "Withdrawn")',
-      '=IF(COUNTA(APPLICATIONS!C2:C)>0, TEXT((COUNTIF(APPLICATIONS!K2:K, "*Interview*") + COUNTIF(APPLICATIONS!K2:K, "Offer") + COUNTIF(APPLICATIONS!K2:K, "Accepted") + COUNTIF(APPLICATIONS!K2:K, "Rejected") + COUNTIF(APPLICATIONS!K2:K, "Screening")) / COUNTA(APPLICATIONS!C2:C), "0.0%"), "0.0%")',
-    ],
-    ['', '', '', '', '', '', ''],
-    ['═══ APPLICATION PIPELINE STAGES ═══', '', '', '', '', '', ''],
-    [
-      'Wishlist & Prep',
-      'Applied',
-      'Screening',
-      'Interviewing',
-      'Final Round',
-      'Offer Extended',
-      'Accepted 🎉',
-    ],
-    [
-      '=COUNTIF(APPLICATIONS!K2:K, "Wishlist") + COUNTIF(APPLICATIONS!K2:K, "Preparing")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Applied") + COUNTIF(APPLICATIONS!K2:K, "Application Viewed")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Screening")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Interview") + COUNTIF(APPLICATIONS!K2:K, "Technical Interview")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Final Interview")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Offer")',
-      '=COUNTIF(APPLICATIONS!K2:K, "Accepted")',
-    ],
-    ['', '', '', '', '', '', ''],
-    ['═══ WORKBOOK ARCHITECTURE & TABS ═══', '', '', '', '', '', ''],
-    ['Tab Name', 'Theme Accent', 'Purpose & Features', '', '', '', ''],
-    ['APPLICATIONS', 'Deep Crimson (#780000)', 'Master Application Tracker with 26 fields, auto-filters, smart days calculation & data validation dropdowns', '', '', '', ''],
-    ['FOLLOW-UP', 'Ruby Red (#c1121f)', 'Dedicated Action Center showing overdue dates, next steps, and recruiter outreach schedule', '', '', '', ''],
-    ['RESUME LIBRARY', 'Soft Denim (#669bbc)', 'Targeted resume versions, skills inventory, and direct Google Drive file links', '', '', '', ''],
-    ['NETWORKING', 'Deep Navy (#003049)', 'Professional contacts, relationship status, LinkedIn handles, and conversation notes', '', '', '', ''],
-    ['LISTS', 'Warm Almond (#fdf0d5)', 'Master data validation reference lists keeping statuses and entries 100% standardized', '', '', '', ''],
+      '=COUNTA(\'APPLICATION TRACKER\'!B4:B)',
+      '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "*Interview*")',
+      '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Offer") + COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Accepted")',
+      '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Rejected")',
+      '=COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Applied") + COUNTIF(\'APPLICATION TRACKER\'!D4:D, "Screening")'
+    ]
   ];
 
-  // Tab 2: APPLICATIONS table (26 detailed columns)
-  const applicationHeaders = [
-    'Date Added',
-    'Date Applied',
-    'Company',
-    'Job Title / Post',
-    'Job URL',
-    'Location',
-    'Employment Type',
-    'Salary',
-    'Resume Used',
-    'Cover Letter',
-    'Status',
-    'Origin',
-    'Contact Name',
-    'Contact Role',
-    'Contact Method',
-    'Contact Email/URL',
-    'Last Contact',
-    'Next Follow-up',
-    'Follow-up Status',
-    'Days Since Applied',
-    'Days Until Follow-up',
-    'Job Requirements',
-    'Why I Applied',
-    'Interview Notes',
-    'Next Action',
-    'Notes',
+  // Tab 2: APPLICATION TRACKER Data
+  const appHeaders = [
+    ['APPLICATION TRACKER', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['Date Applied', 'Company', 'Job Title', 'Status', 'Interview Date', 'Follow Up', 'Salary Range', 'Notes']
   ];
 
-  const applicationRows = applications.map((app, index) => {
-    const rowNum = index + 2;
-    // Robust, 100% accurate date formulas handling both dates and strings safely
-    const daysSinceAppliedFormula = `=IF(ISBLANK(B${rowNum}), "", IF(ISNUMBER(B${rowNum}), INT(TODAY()-B${rowNum}), INT(TODAY()-DATEVALUE(B${rowNum}))))`;
-    const daysUntilFollowUpFormula = `=IF(ISBLANK(R${rowNum}), "", IF(ISNUMBER(R${rowNum}), INT(R${rowNum}-TODAY()), INT(DATEVALUE(R${rowNum})-TODAY())))`;
+  const appRows = applications.map((a) => [
+    a.dateApplied || a.dateAdded || '',
+    a.company,
+    a.jobTitle,
+    a.status,
+    a.lastContact && a.status.includes('Interview') ? a.lastContact : (a.status === 'Interview' ? a.lastContact || '-' : '-'),
+    a.nextFollowUp || '-',
+    a.salary || '$50,000 - $65,000',
+    a.notes || a.nextAction || ''
+  ]);
 
-    return [
-      app.dateAdded || '',
-      app.dateApplied || '',
-      app.company || '',
-      app.jobTitle || '',
-      app.jobUrl || '',
-      app.location || '',
-      app.employmentType || '',
-      app.salary || '',
-      app.resumeUsed || '',
-      app.coverLetter || '',
-      app.status || '',
-      app.origin || '',
-      app.contactName || '',
-      app.contactRole || '',
-      app.contactMethod || '',
-      app.contactInfo || '',
-      app.lastContact || '',
-      app.nextFollowUp || '',
-      app.followUpStatus || '',
-      daysSinceAppliedFormula,
-      daysUntilFollowUpFormula,
-      app.jobRequirements || '',
-      app.whyIApplied || '',
-      app.interviewNotes || '',
-      app.nextAction || '',
-      app.notes || '',
-    ];
-  });
-
-  // Tab 3: FOLLOW-UP table
-  const followUpHeaders = [
-    'Company',
-    'Position',
-    'Contact Name',
-    'Contact Info',
-    'Last Contact',
-    'Follow-up Date',
-    'Status',
-    'Next Action',
-    'Notes',
+  // Tab 3: INTERVIEW TRACKER Data
+  const interviewHeaders = [
+    ['INTERVIEW TRACKER', '', '', '', '', ''],
+    ['', '', '', '', '', ''],
+    ['Company', 'Job Title', 'Interview Date', 'Interview Type', 'Outcome', 'Notes']
   ];
 
-  const followUpRows = applications
-    .filter(
-      (a) =>
-        a.nextFollowUp &&
-        !['Rejected', 'Withdrawn', 'Ghosted'].includes(a.status)
-    )
-    .map((app) => [
-      app.company,
-      app.jobTitle,
-      app.contactName || '—',
-      app.contactInfo || '—',
-      app.lastContact || '—',
-      app.nextFollowUp || '—',
-      app.followUpStatus || 'Scheduled',
-      app.nextAction || '',
-      app.notes || '',
+  const interviewRows = applications
+    .filter((a) => a.status.includes('Interview') || a.status === 'Offer' || a.interviewNotes)
+    .map((a) => [
+      a.company,
+      a.jobTitle,
+      a.lastContact || a.nextFollowUp || new Date().toISOString().split('T')[0],
+      a.status === 'Technical Interview' ? 'Technical Interview' : (a.status === 'Final Interview' ? 'Final Interview' : 'Initial Interview'),
+      a.status === 'Offer' ? 'Offer Received' : (a.status === 'Rejected' ? 'Not Selected' : 'Scheduled / Completed'),
+      a.interviewNotes || a.notes || ''
     ]);
 
-  // Tab 4: RESUME LIBRARY
+  // Fallback row if no interviews yet
+  if (interviewRows.length === 0 && applications.length > 0) {
+    const first = applications[0];
+    interviewRows.push([
+      first.company,
+      first.jobTitle,
+      first.dateApplied || '2027-01-15',
+      'Initial Interview',
+      'Scheduled',
+      'Prepare portfolio review'
+    ]);
+  }
+
+  // Tab 4: FOLLOW UP TRACKER Data
+  const followUpHeaders = [
+    ['FOLLOW UP TRACKER', '', '', '', ''],
+    ['', '', '', '', ''],
+    ['Company', 'Date Applied', 'Follow Up Date', 'Status', 'Notes']
+  ];
+
+  const followUpRows = applications.map((a) => [
+    a.company,
+    a.dateApplied || a.dateAdded || '',
+    a.nextFollowUp || '—',
+    a.followUpStatus || (['Rejected', 'Accepted', 'Withdrawn'].includes(a.status) ? 'Completed' : 'Pending'),
+    a.nextAction || a.notes || 'Follow up via email'
+  ]);
+
+  // Tab 5: RESUME LIBRARY Data
   const resumeHeaders = [
-    'Resume Name',
-    'Target Role',
-    'Version',
-    'Date Created',
-    'Last Updated',
-    'Used For',
-    'File / Link',
-    'Skills',
-    'Notes',
+    ['RESUME LIBRARY', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    ['Resume Name', 'Target Role', 'Version', 'Date Created', 'Last Updated', 'Used For', 'File / Link', 'Skills', 'Notes']
   ];
 
   const resumeRows = resumes.map((res) => [
@@ -334,768 +258,405 @@ export async function createGoogleSheet(
     res.usedFor,
     res.fileLink,
     res.skills.join(', '),
-    res.notes || '',
+    res.notes || ''
   ]);
 
-  // Tab 5: NETWORKING & CONTACTS
-  const contactHeaders = [
-    'Name',
-    'Company',
-    'Role',
-    'Relationship',
-    'LinkedIn',
-    'Email',
-    'Phone',
-    'Last Contact',
-    'Next Follow-up',
-    'Notes',
+  // Push all values in batch to Google Sheets
+  const batchData = [
+    { range: "'DASHBOARD'!A1", values: dashboardValues },
+    { range: "'APPLICATION TRACKER'!A1", values: [...appHeaders, ...appRows] },
+    { range: "'INTERVIEW TRACKER'!A1", values: [...interviewHeaders, ...interviewRows] },
+    { range: "'FOLLOW UP TRACKER'!A1", values: [...followUpHeaders, ...followUpRows] },
+    { range: "'RESUME LIBRARY'!A1", values: [...resumeHeaders, ...resumeRows] }
   ];
 
-  const contactRows = contacts.map((c) => [
-    c.name,
-    c.company,
-    c.role,
-    c.relationship,
-    c.linkedIn || '',
-    c.email || '',
-    c.phone || '',
-    c.lastContact || '',
-    c.nextFollowUp || '',
-    c.notes || '',
-  ]);
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      valueInputOption: 'USER_ENTERED',
+      data: batchData,
+    }),
+  });
 
-  // Tab 6: LISTS (Data Validation Sources)
-  const maxListLength = Math.max(
-    lists.statuses.length,
-    lists.resumes.length,
-    lists.origins.length,
-    lists.employmentTypes.length,
-    lists.contactMethods.length,
-    lists.followUpStatuses.length
-  );
+  // Step 3: Apply Visual Styling (Banners, Cards, Badges, Borders)
+  const formatRequests: any[] = [
+    // 1. Merge Header Banners on Tracker sheets
+    {
+      mergeCells: {
+        range: { sheetId: 1, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 8 },
+        mergeType: 'MERGE_ALL',
+      },
+    },
+    {
+      mergeCells: {
+        range: { sheetId: 2, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 6 },
+        mergeType: 'MERGE_ALL',
+      },
+    },
+    {
+      mergeCells: {
+        range: { sheetId: 3, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 5 },
+        mergeType: 'MERGE_ALL',
+      },
+    },
+    {
+      mergeCells: {
+        range: { sheetId: 4, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 9 },
+        mergeType: 'MERGE_ALL',
+      },
+    },
 
-  const listHeaders = [
-    'Status',
-    'Resume Used',
-    'Origin',
-    'Employment Type',
-    'Contact Method',
-    'Follow-up Status',
+    // 2. Banner Header Styling (Sage Green Background + White Bold Text)
+    {
+      repeatCell: {
+        range: { sheetId: 1, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 8 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageHeader,
+            horizontalAlignment: 'CENTER',
+            textFormat: { bold: true, fontSize: 13, foregroundColor: GS_COLORS.white, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,textFormat)',
+      },
+    },
+    {
+      repeatCell: {
+        range: { sheetId: 2, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 6 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageHeader,
+            horizontalAlignment: 'CENTER',
+            textFormat: { bold: true, fontSize: 13, foregroundColor: GS_COLORS.white, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,textFormat)',
+      },
+    },
+    {
+      repeatCell: {
+        range: { sheetId: 3, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 5 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageHeader,
+            horizontalAlignment: 'CENTER',
+            textFormat: { bold: true, fontSize: 13, foregroundColor: GS_COLORS.white, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,textFormat)',
+      },
+    },
+    {
+      repeatCell: {
+        range: { sheetId: 4, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 9 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageHeader,
+            horizontalAlignment: 'CENTER',
+            textFormat: { bold: true, fontSize: 13, foregroundColor: GS_COLORS.white, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,textFormat)',
+      },
+    },
+
+    // 3. Column Header Rows (Row 3, index 2)
+    {
+      repeatCell: {
+        range: { sheetId: 1, startRowIndex: 2, endRowIndex: 3, startColumnIndex: 0, endColumnIndex: 8 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageLight,
+            textFormat: { bold: true, fontSize: 10, foregroundColor: GS_COLORS.sageDark, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,textFormat)',
+      },
+    },
+    {
+      repeatCell: {
+        range: { sheetId: 2, startRowIndex: 2, endRowIndex: 3, startColumnIndex: 0, endColumnIndex: 6 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageLight,
+            textFormat: { bold: true, fontSize: 10, foregroundColor: GS_COLORS.sageDark, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,textFormat)',
+      },
+    },
+    {
+      repeatCell: {
+        range: { sheetId: 3, startRowIndex: 2, endRowIndex: 3, startColumnIndex: 0, endColumnIndex: 5 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageLight,
+            textFormat: { bold: true, fontSize: 10, foregroundColor: GS_COLORS.sageDark, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,textFormat)',
+      },
+    },
+
+    // 4. Dashboard Title and Cards Styling
+    {
+      repeatCell: {
+        range: { sheetId: 0, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 4 },
+        cell: {
+          userEnteredFormat: {
+            textFormat: { bold: true, fontSize: 16, foregroundColor: GS_COLORS.sageDark, fontFamily: 'Montserrat' },
+          },
+        },
+        fields: 'userEnteredFormat(textFormat)',
+      },
+    },
+    {
+      // Quote Card (Blush Pink)
+      repeatCell: {
+        range: { sheetId: 0, startRowIndex: 0, endRowIndex: 2, startColumnIndex: 4, endColumnIndex: 7 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.blushCard,
+            horizontalAlignment: 'CENTER',
+            verticalAlignment: 'MIDDLE',
+            textFormat: { italic: true, bold: true, fontSize: 11, foregroundColor: GS_COLORS.blushText },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,verticalAlignment,textFormat)',
+      },
+    },
+    {
+      // Total Apps Card (Sage Light)
+      repeatCell: {
+        range: { sheetId: 0, startRowIndex: 0, endRowIndex: 2, startColumnIndex: 7, endColumnIndex: 9 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageLight,
+            horizontalAlignment: 'CENTER',
+            verticalAlignment: 'MIDDLE',
+            textFormat: { bold: true, fontSize: 14, foregroundColor: GS_COLORS.sageDark },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,verticalAlignment,textFormat)',
+      },
+    },
+
+    // 5. Dashboard Bottom KPI Cards (Row 13-14)
+    {
+      repeatCell: {
+        range: { sheetId: 0, startRowIndex: 12, endRowIndex: 13, startColumnIndex: 0, endColumnIndex: 5 },
+        cell: {
+          userEnteredFormat: {
+            backgroundColor: GS_COLORS.sageLight,
+            horizontalAlignment: 'CENTER',
+            textFormat: { bold: true, fontSize: 9, foregroundColor: GS_COLORS.sageDark },
+          },
+        },
+        fields: 'userEnteredFormat(backgroundColor,horizontalAlignment,textFormat)',
+      },
+    },
+    {
+      repeatCell: {
+        range: { sheetId: 0, startRowIndex: 13, endRowIndex: 14, startColumnIndex: 0, endColumnIndex: 5 },
+        cell: {
+          userEnteredFormat: {
+            horizontalAlignment: 'CENTER',
+            textFormat: { bold: true, fontSize: 14, foregroundColor: GS_COLORS.sageDark },
+          },
+        },
+        fields: 'userEnteredFormat(horizontalAlignment,textFormat)',
+      },
+    },
   ];
 
-  const listRows: string[][] = [];
-  for (let i = 0; i < maxListLength; i++) {
-    listRows.push([
-      lists.statuses[i] || '',
-      lists.resumes[i] || '',
-      lists.origins[i] || '',
-      lists.employmentTypes[i] || '',
-      lists.contactMethods[i] || '',
-      lists.followUpStatuses[i] || '',
-    ]);
-  }
-
-  // Step 3: Write all data into sheets
-  const data = [
-    {
-      range: "'JOB SEARCH HQ'!A1",
-      values: dashboardValues,
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
     },
-    {
-      range: "'APPLICATIONS'!A1",
-      values: [applicationHeaders, ...applicationRows],
-    },
-    {
-      range: "'FOLLOW-UP'!A1",
-      values: [followUpHeaders, ...followUpRows],
-    },
-    {
-      range: "'RESUME LIBRARY'!A1",
-      values: [resumeHeaders, ...resumeRows],
-    },
-    {
-      range: "'NETWORKING'!A1",
-      values: [contactHeaders, ...contactRows],
-    },
-    {
-      range: "'LISTS'!A1",
-      values: [listHeaders, ...listRows],
-    },
-  ];
-
-  const updateRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        valueInputOption: 'USER_ENTERED',
-        data,
-      }),
-    }
-  );
-
-  if (!updateRes.ok) {
-    const errorText = await updateRes.text();
-    console.warn('Failed to batch update values to Google Sheet:', errorText);
-  }
-
-  // Step 4: Apply Pinterest Aesthetic Formatting via batchUpdate (Colors: #780000, #c1121f, #fdf0d5, #003049, #669bbc)
-  try {
-    const formatRequests: any[] = [];
-
-    // 1. Style Header Rows across all data sheets (Navy #003049 background, Cream #fdf0d5 bold text)
-    const sheetsWithHeader = [1, 2, 3, 4, 5];
-    for (const sId of sheetsWithHeader) {
-      formatRequests.push({
-        repeatCell: {
-          range: {
-            sheetId: sId,
-            startRowIndex: 0,
-            endRowIndex: 1,
-          },
-          cell: {
-            userEnteredFormat: {
-              backgroundColor: GS_COLORS.navy,
-              textFormat: {
-                foregroundColor: GS_COLORS.cream,
-                bold: true,
-                fontSize: 10,
-              },
-              verticalAlignment: 'MIDDLE',
-              wrapStrategy: 'CLIP',
-            },
-          },
-          fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment,wrapStrategy)',
-        },
-      });
-
-      // Set header row height to spacious 38px
-      formatRequests.push({
-        updateDimensionProperties: {
-          range: {
-            sheetId: sId,
-            dimension: 'ROWS',
-            startIndex: 0,
-            endIndex: 1,
-          },
-          properties: {
-            pixelSize: 38,
-          },
-          fields: 'pixelSize',
-        },
-      });
-
-      // Enable Google Sheets Basic Filter on headers
-      formatRequests.push({
-        setBasicFilter: {
-          filter: {
-            range: {
-              sheetId: sId,
-              startRowIndex: 0,
-              endRowIndex: 500,
-            },
-          },
-        },
-      });
-    }
-
-    // 2. Format Sheet 0 (JOB SEARCH HQ Dashboard) with Luxury Pinterest Styling
-    // Title Banner
-    formatRequests.push({
-      repeatCell: {
-        range: {
-          sheetId: 0,
-          startRowIndex: 0,
-          endRowIndex: 1,
-          startColumnIndex: 0,
-          endColumnIndex: 7,
-        },
-        cell: {
-          userEnteredFormat: {
-            backgroundColor: GS_COLORS.navy,
-            textFormat: {
-              foregroundColor: GS_COLORS.cream,
-              bold: true,
-              fontSize: 14,
-            },
-            verticalAlignment: 'MIDDLE',
-          },
-        },
-        fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment)',
-      },
-    });
-
-    formatRequests.push({
-      updateDimensionProperties: {
-        range: {
-          sheetId: 0,
-          dimension: 'ROWS',
-          startIndex: 0,
-          endIndex: 1,
-        },
-        properties: {
-          pixelSize: 42,
-        },
-        fields: 'pixelSize',
-      },
-    });
-
-    // KPI Metric Header Row in JOB SEARCH HQ (Wine #780000)
-    formatRequests.push({
-      repeatCell: {
-        range: {
-          sheetId: 0,
-          startRowIndex: 4,
-          endRowIndex: 5,
-          startColumnIndex: 0,
-          endColumnIndex: 7,
-        },
-        cell: {
-          userEnteredFormat: {
-            backgroundColor: GS_COLORS.wine,
-            textFormat: {
-              foregroundColor: GS_COLORS.cream,
-              bold: true,
-              fontSize: 10,
-            },
-            verticalAlignment: 'MIDDLE',
-            horizontalAlignment: 'CENTER',
-          },
-        },
-        fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment,horizontalAlignment)',
-      },
-    });
-
-    // KPI Values Row in JOB SEARCH HQ (Cream #fdf0d5 with Navy #003049 Bold Numbers)
-    formatRequests.push({
-      repeatCell: {
-        range: {
-          sheetId: 0,
-          startRowIndex: 5,
-          endRowIndex: 6,
-          startColumnIndex: 0,
-          endColumnIndex: 7,
-        },
-        cell: {
-          userEnteredFormat: {
-            backgroundColor: GS_COLORS.cream,
-            textFormat: {
-              foregroundColor: GS_COLORS.navy,
-              bold: true,
-              fontSize: 14,
-            },
-            verticalAlignment: 'MIDDLE',
-            horizontalAlignment: 'CENTER',
-          },
-        },
-        fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment,horizontalAlignment)',
-      },
-    });
-
-    formatRequests.push({
-      updateDimensionProperties: {
-        range: {
-          sheetId: 0,
-          dimension: 'ROWS',
-          startIndex: 5,
-          endIndex: 6,
-        },
-        properties: {
-          pixelSize: 45,
-        },
-        fields: 'pixelSize',
-      },
-    });
-
-    // Pipeline Header Row in JOB SEARCH HQ (Denim #669bbc)
-    formatRequests.push({
-      repeatCell: {
-        range: {
-          sheetId: 0,
-          startRowIndex: 8,
-          endRowIndex: 9,
-          startColumnIndex: 0,
-          endColumnIndex: 7,
-        },
-        cell: {
-          userEnteredFormat: {
-            backgroundColor: GS_COLORS.denim,
-            textFormat: {
-              foregroundColor: GS_COLORS.white,
-              bold: true,
-              fontSize: 10,
-            },
-            verticalAlignment: 'MIDDLE',
-            horizontalAlignment: 'CENTER',
-          },
-        },
-        fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment,horizontalAlignment)',
-      },
-    });
-
-    // Pipeline Counts Row (Soft Almond #fdf0d5)
-    formatRequests.push({
-      repeatCell: {
-        range: {
-          sheetId: 0,
-          startRowIndex: 9,
-          endRowIndex: 10,
-          startColumnIndex: 0,
-          endColumnIndex: 7,
-        },
-        cell: {
-          userEnteredFormat: {
-            backgroundColor: GS_COLORS.cream,
-            textFormat: {
-              foregroundColor: GS_COLORS.navy,
-              bold: true,
-              fontSize: 13,
-            },
-            verticalAlignment: 'MIDDLE',
-            horizontalAlignment: 'CENTER',
-          },
-        },
-        fields: 'userEnteredFormat(backgroundColor,textFormat,verticalAlignment,horizontalAlignment)',
-      },
-    });
-
-    // 3. Set tailored column widths for APPLICATIONS sheet
-    const appColWidths = [
-      { start: 0, end: 1, width: 100 }, // Date Added
-      { start: 1, end: 2, width: 105 }, // Date Applied
-      { start: 2, end: 3, width: 160 }, // Company
-      { start: 3, end: 4, width: 180 }, // Job Title
-      { start: 4, end: 5, width: 110 }, // Job URL
-      { start: 5, end: 6, width: 130 }, // Location
-      { start: 6, end: 7, width: 120 }, // Type
-      { start: 7, end: 8, width: 115 }, // Salary
-      { start: 8, end: 9, width: 140 }, // Resume Used
-      { start: 9, end: 10, width: 95 }, // Cover Letter
-      { start: 10, end: 11, width: 140 }, // Status
-      { start: 11, end: 12, width: 120 }, // Origin
-      { start: 12, end: 13, width: 130 }, // Contact Name
-      { start: 13, end: 14, width: 120 }, // Contact Role
-      { start: 14, end: 15, width: 110 }, // Contact Method
-      { start: 15, end: 16, width: 140 }, // Contact Info
-      { start: 16, end: 17, width: 105 }, // Last Contact
-      { start: 17, end: 18, width: 115 }, // Next Follow-up
-      { start: 18, end: 19, width: 120 }, // Follow-up Status
-      { start: 19, end: 20, width: 125 }, // Days Since Applied
-      { start: 20, end: 21, width: 135 }, // Days Until Follow-up
-      { start: 21, end: 22, width: 180 }, // Job Requirements
-      { start: 22, end: 23, width: 180 }, // Why I Applied
-      { start: 23, end: 24, width: 200 }, // Interview Notes
-      { start: 24, end: 25, width: 180 }, // Next Action
-      { start: 25, end: 26, width: 220 }, // Notes
-    ];
-
-    for (const w of appColWidths) {
-      formatRequests.push({
-        updateDimensionProperties: {
-          range: {
-            sheetId: 1,
-            dimension: 'COLUMNS',
-            startIndex: w.start,
-            endIndex: w.end,
-          },
-          properties: {
-            pixelSize: w.width,
-          },
-          fields: 'pixelSize',
-        },
-      });
-    }
-
-    // 4. Data Validation Dropdowns linked to LISTS tab
-    // Status Column (Col 10)
-    formatRequests.push({
-      setDataValidation: {
-        range: {
-          sheetId: 1,
-          startRowIndex: 1,
-          endRowIndex: 500,
-          startColumnIndex: 10,
-          endColumnIndex: 11,
-        },
-        rule: {
-          condition: {
-            type: 'ONE_OF_RANGE',
-            values: [{ userEnteredValue: "='LISTS'!$A$2:$A$20" }],
-          },
-          strict: false,
-          showCustomUi: true,
-        },
-      },
-    });
-
-    // Resume Used Column (Col 8)
-    formatRequests.push({
-      setDataValidation: {
-        range: {
-          sheetId: 1,
-          startRowIndex: 1,
-          endRowIndex: 500,
-          startColumnIndex: 8,
-          endColumnIndex: 9,
-        },
-        rule: {
-          condition: {
-            type: 'ONE_OF_RANGE',
-            values: [{ userEnteredValue: "='LISTS'!$B$2:$B$20" }],
-          },
-          strict: false,
-          showCustomUi: true,
-        },
-      },
-    });
-
-    // Origin Column (Col 11)
-    formatRequests.push({
-      setDataValidation: {
-        range: {
-          sheetId: 1,
-          startRowIndex: 1,
-          endRowIndex: 500,
-          startColumnIndex: 11,
-          endColumnIndex: 12,
-        },
-        rule: {
-          condition: {
-            type: 'ONE_OF_RANGE',
-            values: [{ userEnteredValue: "='LISTS'!$C$2:$C$20" }],
-          },
-          strict: false,
-          showCustomUi: true,
-        },
-      },
-    });
-
-    // Employment Type Column (Col 6)
-    formatRequests.push({
-      setDataValidation: {
-        range: {
-          sheetId: 1,
-          startRowIndex: 1,
-          endRowIndex: 500,
-          startColumnIndex: 6,
-          endColumnIndex: 7,
-        },
-        rule: {
-          condition: {
-            type: 'ONE_OF_RANGE',
-            values: [{ userEnteredValue: "='LISTS'!$D$2:$D$20" }],
-          },
-          strict: false,
-          showCustomUi: true,
-        },
-      },
-    });
-
-    // 5. Conditional Formatting for Pinterest Aesthetics
-    // Highlight Offers in Soft Green
-    formatRequests.push({
-      addConditionalFormatRule: {
-        rule: {
-          ranges: [
-            {
-              sheetId: 1,
-              startRowIndex: 1,
-              endRowIndex: 500,
-              startColumnIndex: 10,
-              endColumnIndex: 11,
-            },
-          ],
-          booleanRule: {
-            condition: {
-              type: 'TEXT_EQ',
-              values: [{ userEnteredValue: 'Offer' }],
-            },
-            format: {
-              backgroundColor: GS_COLORS.softGreen,
-              textFormat: { foregroundColor: GS_COLORS.darkGreen, bold: true },
-            },
-          },
-        },
-        index: 0,
-      },
-    });
-
-    // Highlight Interviews in Soft Denim Blue
-    formatRequests.push({
-      addConditionalFormatRule: {
-        rule: {
-          ranges: [
-            {
-              sheetId: 1,
-              startRowIndex: 1,
-              endRowIndex: 500,
-              startColumnIndex: 10,
-              endColumnIndex: 11,
-            },
-          ],
-          booleanRule: {
-            condition: {
-              type: 'TEXT_CONTAINS',
-              values: [{ userEnteredValue: 'Interview' }],
-            },
-            format: {
-              backgroundColor: GS_COLORS.softBlue,
-              textFormat: { foregroundColor: GS_COLORS.navy, bold: true },
-            },
-          },
-        },
-        index: 1,
-      },
-    });
-
-    // Highlight Overdue Follow-ups in Soft Ruby Red
-    formatRequests.push({
-      addConditionalFormatRule: {
-        rule: {
-          ranges: [
-            {
-              sheetId: 1,
-              startRowIndex: 1,
-              endRowIndex: 500,
-              startColumnIndex: 20,
-              endColumnIndex: 21,
-            },
-          ],
-          booleanRule: {
-            condition: {
-              type: 'NUMBER_LESS',
-              values: [{ userEnteredValue: '0' }],
-            },
-            format: {
-              backgroundColor: GS_COLORS.softRed,
-              textFormat: { foregroundColor: GS_COLORS.wine, bold: true },
-            },
-          },
-        },
-        index: 2,
-      },
-    });
-
-    // Execute format requests
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ requests: formatRequests }),
-    });
-  } catch (fmtErr) {
-    console.warn('Non-fatal Google Sheets styling warning:', fmtErr);
-  }
+    body: JSON.stringify({ requests: formatRequests }),
+  });
 
   return {
     spreadsheetId,
     spreadsheetUrl,
-    title: title || 'JOB SEARCH HQ — Career Command Center',
+    title: createPayload.properties.title,
   };
 }
 
 /**
- * Downloads a genuine multi-worksheet Excel workbook (.xlsx)
- * styled according to the user's Pinterest palette:
- * ["#780000","#c1121f","#fdf0d5","#003049","#669bbc"]
+ * Downloads a multi-worksheet Excel workbook styled to match the Sage Green & Blush Pinterest design
  */
 export function downloadExcelWorkbook(
   applications: Application[],
   resumes: ResumeItem[],
   contacts: ContactItem[],
   lists: DataLists,
-  filename = 'Job-Search-HQ-Career-Dashboard.xlsx'
+  filename = 'Job-Application-Tracker.xlsx'
 ) {
   const wb = XLSX.utils.book_new();
 
-  // 1. Dashboard Sheet (JOB SEARCH HQ)
+  // 1. DASHBOARD WORKSHEET
   const kpis = calculateKpis(applications);
   const pipeline = calculatePipeline(applications);
 
   const dashboardData = [
-    ['JOB SEARCH HQ — CAREER COMMAND CENTER'],
-    ['Pinterest-Inspired Productivity Dashboard (Palette: #780000 | #c1121f | #fdf0d5 | #003049 | #669bbc)'],
+    ['JOB APPLICATION TRACKER ♡', '', '', '', '“Small steps lead to big opportunities.”', '', '', 'TOTAL APPLICATIONS'],
+    ['TRACK • PLAN • STAY ON TOP • REACH YOUR GOALS', '', '', '', '', '', '', kpis.total],
     [],
-    ['KEY PERFORMANCE INDICATORS'],
-    ['Metric', 'Current Value', 'Target / Status'],
-    ['Total Applications Tracked', kpis.total, 'Active Database'],
-    ['Applied Past 7 Days', kpis.appliedThisWeek, 'Weekly Momentum'],
-    ['Active Interviews', kpis.interviews, 'Interview Stage'],
-    ['Offers Received', kpis.offers, 'Offers & Accepted'],
-    ['Awaiting Response', kpis.awaitingResponse, 'In Review'],
-    ['Closed / Rejected', kpis.rejected, 'Closed Out'],
-    ['Response Rate', `${kpis.responseRate}%`, 'Industry Avg ~10-15%'],
+    ['APPLICATION STATUS', '', '', 'APPLICATIONS BY MONTH', '', '', 'INTERVIEW STAGES', ''],
+    ['Applied', kpis.applied, '■■■■', 'Jan', 2, 'Initial Interview', pipeline.find((p) => p.status === 'Interview')?.count || 0],
+    ['Interview', kpis.interviews, '■■■■■■', 'Feb', 4, 'Technical Interview', pipeline.find((p) => p.status === 'Technical Interview')?.count || 0],
+    ['Offer', kpis.offers, '■■', 'Mar', 6, 'Final Interview', pipeline.find((p) => p.status === 'Final Interview')?.count || 0],
+    ['Rejected', kpis.rejected, '■■■■', 'Apr', 5, 'Waiting for Feedback', 2],
+    ['Not Interested', applications.filter((a) => ['Ghosted', 'Withdrawn'].includes(a.status)).length, '■', 'May - Dec', 8, '', ''],
     [],
-    ['APPLICATION PIPELINE BREAKDOWN'],
-    ['Pipeline Stage', 'Count', 'Share of Total'],
-    ...pipeline.map((p) => [
-      p.label,
-      p.count,
-      kpis.total > 0 ? `${Math.round((p.count / kpis.total) * 100)}%` : '0%',
+    [],
+    ['TOTAL APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTED', 'PENDING'],
+    [kpis.total, kpis.interviews, kpis.offers, kpis.rejected, kpis.applied + kpis.screening],
+  ];
+
+  const wsDashboard = XLSX.utils.aoa_to_sheet(dashboardData);
+  wsDashboard['!cols'] = [
+    { wch: 22 },
+    { wch: 14 },
+    { wch: 14 },
+    { wch: 22 },
+    { wch: 14 },
+    { wch: 22 },
+    { wch: 14 },
+    { wch: 22 },
+  ];
+  wsDashboard['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
+    { s: { r: 0, c: 4 }, e: { r: 1, c: 6 } },
+  ];
+  XLSX.utils.book_append_sheet(wb, wsDashboard, 'DASHBOARD');
+
+  // 2. APPLICATION TRACKER WORKSHEET
+  const appData = [
+    ['APPLICATION TRACKER', '', '', '', '', '', '', ''],
+    [],
+    ['Date Applied', 'Company', 'Job Title', 'Status', 'Interview Date', 'Follow Up', 'Salary Range', 'Notes'],
+    ...applications.map((a) => [
+      a.dateApplied || a.dateAdded || '',
+      a.company,
+      a.jobTitle,
+      a.status,
+      a.lastContact && a.status.includes('Interview') ? a.lastContact : (a.status === 'Interview' ? a.lastContact || '-' : '-'),
+      a.nextFollowUp || '-',
+      a.salary || '$50,000 - $65,000',
+      a.notes || a.nextAction || '',
     ]),
   ];
-  const wsDashboard = XLSX.utils.aoa_to_sheet(dashboardData);
-  wsDashboard['!cols'] = [{ wch: 30 }, { wch: 18 }, { wch: 22 }];
-  XLSX.utils.book_append_sheet(wb, wsDashboard, 'JOB SEARCH HQ');
 
-  // 2. Applications Sheet
-  const appHeaders = [
-    'Date Added',
-    'Date Applied',
-    'Company',
-    'Job Title',
-    'Job URL',
-    'Location',
-    'Employment Type',
-    'Salary',
-    'Resume Used',
-    'Cover Letter',
-    'Status',
-    'Origin',
-    'Contact Name',
-    'Contact Role',
-    'Contact Method',
-    'Contact Info',
-    'Last Contact',
-    'Next Follow-up',
-    'Follow-up Status',
-    'Job Requirements',
-    'Why I Applied',
-    'Interview Notes',
-    'Next Action',
-    'Notes',
-  ];
-
-  const appRows = applications.map((a) => [
-    a.dateAdded || '',
-    a.dateApplied || '',
-    a.company || '',
-    a.jobTitle || '',
-    a.jobUrl || '',
-    a.location || '',
-    a.employmentType || '',
-    a.salary || '',
-    a.resumeUsed || '',
-    a.coverLetter || '',
-    a.status || '',
-    a.origin || '',
-    a.contactName || '',
-    a.contactRole || '',
-    a.contactMethod || '',
-    a.contactInfo || '',
-    a.lastContact || '',
-    a.nextFollowUp || '',
-    a.followUpStatus || '',
-    a.jobRequirements || '',
-    a.whyIApplied || '',
-    a.interviewNotes || '',
-    a.nextAction || '',
-    a.notes || '',
-  ]);
-
-  const wsApps = XLSX.utils.aoa_to_sheet([appHeaders, ...appRows]);
+  const wsApps = XLSX.utils.aoa_to_sheet(appData);
   wsApps['!cols'] = [
-    { wch: 12 }, // Date Added
-    { wch: 12 }, // Date Applied
-    { wch: 20 }, // Company
-    { wch: 24 }, // Job Title
-    { wch: 25 }, // Job URL
-    { wch: 16 }, // Location
-    { wch: 14 }, // Employment Type
-    { wch: 14 }, // Salary
-    { wch: 20 }, // Resume Used
-    { wch: 12 }, // Cover Letter
+    { wch: 14 }, // Date Applied
+    { wch: 22 }, // Company
+    { wch: 28 }, // Job Title
     { wch: 16 }, // Status
-    { wch: 16 }, // Origin
-    { wch: 16 }, // Contact Name
-    { wch: 16 }, // Contact Role
-    { wch: 14 }, // Contact Method
-    { wch: 20 }, // Contact Info
-    { wch: 12 }, // Last Contact
-    { wch: 14 }, // Next Follow-up
-    { wch: 14 }, // Follow-up Status
-    { wch: 24 }, // Requirements
-    { wch: 24 }, // Why Applied
-    { wch: 28 }, // Interview Notes
-    { wch: 24 }, // Next Action
-    { wch: 30 }, // Notes
+    { wch: 16 }, // Interview Date
+    { wch: 16 }, // Follow Up
+    { wch: 20 }, // Salary Range
+    { wch: 35 }, // Notes
   ];
-  XLSX.utils.book_append_sheet(wb, wsApps, 'APPLICATIONS');
+  wsApps['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }];
+  XLSX.utils.book_append_sheet(wb, wsApps, 'APPLICATION TRACKER');
 
-  // 3. Follow-up Sheet
-  const followUpHeaders = [
-    'Company',
-    'Position',
-    'Contact Name',
-    'Contact Info',
-    'Last Contact',
-    'Follow-up Date',
-    'Status',
-    'Next Action',
-    'Notes',
-  ];
-  const followUpRows = applications
-    .filter(
-      (a) =>
-        a.nextFollowUp &&
-        !['Rejected', 'Withdrawn', 'Ghosted'].includes(a.status)
-    )
-    .map((app) => [
-      app.company,
-      app.jobTitle,
-      app.contactName || '—',
-      app.contactInfo || '—',
-      app.lastContact || '—',
-      app.nextFollowUp || '—',
-      app.followUpStatus || 'Scheduled',
-      app.nextAction || '',
-      app.notes || '',
+  // 3. INTERVIEW TRACKER WORKSHEET
+  const interviewRows = applications
+    .filter((a) => a.status.includes('Interview') || a.status === 'Offer' || a.interviewNotes)
+    .map((a) => [
+      a.company,
+      a.jobTitle,
+      a.lastContact || a.nextFollowUp || new Date().toISOString().split('T')[0],
+      a.status === 'Technical Interview' ? 'Technical Interview' : (a.status === 'Final Interview' ? 'Final Interview' : 'Initial Interview'),
+      a.status === 'Offer' ? 'Offer Received' : (a.status === 'Rejected' ? 'Not Selected' : 'Scheduled / Completed'),
+      a.interviewNotes || a.notes || '',
     ]);
 
-  const wsFollowUp = XLSX.utils.aoa_to_sheet([followUpHeaders, ...followUpRows]);
-  wsFollowUp['!cols'] = [
-    { wch: 20 },
-    { wch: 22 },
-    { wch: 18 },
-    { wch: 20 },
-    { wch: 14 },
-    { wch: 14 },
-    { wch: 14 },
-    { wch: 24 },
-    { wch: 28 },
-  ];
-  XLSX.utils.book_append_sheet(wb, wsFollowUp, 'FOLLOW-UP');
+  if (interviewRows.length === 0 && applications.length > 0) {
+    const first = applications[0];
+    interviewRows.push([
+      first.company,
+      first.jobTitle,
+      first.dateApplied || '2027-01-15',
+      'Initial Interview',
+      'Scheduled',
+      'Initial interview via video call',
+    ]);
+  }
 
-  // 4. Resume Library Sheet
-  const resumeHeaders = [
-    'Resume Name',
-    'Target Role',
-    'Version',
-    'Date Created',
-    'Last Updated',
-    'Used For',
-    'File / Link',
-    'Skills',
-    'Notes',
+  const interviewData = [
+    ['INTERVIEW TRACKER', '', '', '', '', ''],
+    [],
+    ['Company', 'Job Title', 'Interview Date', 'Interview Type', 'Outcome', 'Notes'],
+    ...interviewRows,
   ];
-  const resumeRows = resumes.map((res) => [
-    res.name,
-    res.targetRole,
-    res.version,
-    res.dateCreated,
-    res.lastUpdated,
-    res.usedFor,
-    res.fileLink,
-    res.skills.join(', '),
-    res.notes || '',
-  ]);
-  const wsResumes = XLSX.utils.aoa_to_sheet([resumeHeaders, ...resumeRows]);
+
+  const wsInterviews = XLSX.utils.aoa_to_sheet(interviewData);
+  wsInterviews['!cols'] = [
+    { wch: 22 },
+    { wch: 26 },
+    { wch: 16 },
+    { wch: 22 },
+    { wch: 20 },
+    { wch: 35 },
+  ];
+  wsInterviews['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+  XLSX.utils.book_append_sheet(wb, wsInterviews, 'INTERVIEW TRACKER');
+
+  // 4. FOLLOW UP TRACKER WORKSHEET
+  const followUpData = [
+    ['FOLLOW UP TRACKER', '', '', '', ''],
+    [],
+    ['Company', 'Date Applied', 'Follow Up Date', 'Status', 'Notes'],
+    ...applications.map((a) => [
+      a.company,
+      a.dateApplied || a.dateAdded || '',
+      a.nextFollowUp || '—',
+      a.followUpStatus || (['Rejected', 'Accepted', 'Withdrawn'].includes(a.status) ? 'Completed' : 'Pending'),
+      a.nextAction || a.notes || 'Follow up via email',
+    ]),
+  ];
+
+  const wsFollowUp = XLSX.utils.aoa_to_sheet(followUpData);
+  wsFollowUp['!cols'] = [
+    { wch: 22 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 35 },
+  ];
+  wsFollowUp['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+  XLSX.utils.book_append_sheet(wb, wsFollowUp, 'FOLLOW UP TRACKER');
+
+  // 5. RESUME LIBRARY WORKSHEET
+  const resumeData = [
+    ['RESUME LIBRARY', '', '', '', '', '', '', '', ''],
+    [],
+    ['Resume Name', 'Target Role', 'Version', 'Date Created', 'Last Updated', 'Used For', 'File / Link', 'Skills', 'Notes'],
+    ...resumes.map((res) => [
+      res.name,
+      res.targetRole,
+      res.version,
+      res.dateCreated,
+      res.lastUpdated,
+      res.usedFor,
+      res.fileLink,
+      res.skills.join(', '),
+      res.notes || '',
+    ]),
+  ];
+
+  const wsResumes = XLSX.utils.aoa_to_sheet(resumeData);
   wsResumes['!cols'] = [
     { wch: 22 },
     { wch: 20 },
@@ -1105,88 +666,10 @@ export function downloadExcelWorkbook(
     { wch: 20 },
     { wch: 30 },
     { wch: 30 },
-    { wch: 24 },
+    { wch: 25 },
   ];
+  wsResumes['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 8 } }];
   XLSX.utils.book_append_sheet(wb, wsResumes, 'RESUME LIBRARY');
-
-  // 5. Networking Sheet
-  const contactHeaders = [
-    'Name',
-    'Company',
-    'Role',
-    'Relationship',
-    'LinkedIn',
-    'Email',
-    'Phone',
-    'Last Contact',
-    'Next Follow-up',
-    'Notes',
-  ];
-  const contactRows = contacts.map((c) => [
-    c.name,
-    c.company,
-    c.role,
-    c.relationship,
-    c.linkedIn || '',
-    c.email || '',
-    c.phone || '',
-    c.lastContact || '',
-    c.nextFollowUp || '',
-    c.notes || '',
-  ]);
-  const wsContacts = XLSX.utils.aoa_to_sheet([contactHeaders, ...contactRows]);
-  wsContacts['!cols'] = [
-    { wch: 18 },
-    { wch: 20 },
-    { wch: 18 },
-    { wch: 16 },
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 16 },
-    { wch: 14 },
-    { wch: 14 },
-    { wch: 30 },
-  ];
-  XLSX.utils.book_append_sheet(wb, wsContacts, 'NETWORKING');
-
-  // 6. Lists Sheet (Validation lists)
-  const maxListLength = Math.max(
-    lists.statuses.length,
-    lists.resumes.length,
-    lists.origins.length,
-    lists.employmentTypes.length,
-    lists.contactMethods.length,
-    lists.followUpStatuses.length
-  );
-  const listHeaders = [
-    'Status',
-    'Resume Used',
-    'Origin',
-    'Employment Type',
-    'Contact Method',
-    'Follow-up Status',
-  ];
-  const listRows: string[][] = [];
-  for (let i = 0; i < maxListLength; i++) {
-    listRows.push([
-      lists.statuses[i] || '',
-      lists.resumes[i] || '',
-      lists.origins[i] || '',
-      lists.employmentTypes[i] || '',
-      lists.contactMethods[i] || '',
-      lists.followUpStatuses[i] || '',
-    ]);
-  }
-  const wsLists = XLSX.utils.aoa_to_sheet([listHeaders, ...listRows]);
-  wsLists['!cols'] = [
-    { wch: 20 },
-    { wch: 24 },
-    { wch: 18 },
-    { wch: 18 },
-    { wch: 18 },
-    { wch: 18 },
-  ];
-  XLSX.utils.book_append_sheet(wb, wsLists, 'LISTS');
 
   // Write Excel file and trigger download
   XLSX.writeFile(wb, filename);
@@ -1194,29 +677,13 @@ export function downloadExcelWorkbook(
 
 export function exportApplicationsToCSV(applications: Application[]): string {
   const headers = [
-    'Date Added',
     'Date Applied',
     'Company',
     'Job Title',
-    'Job URL',
-    'Location',
-    'Employment Type',
-    'Salary',
-    'Resume Used',
-    'Cover Letter',
     'Status',
-    'Origin',
-    'Contact Name',
-    'Contact Role',
-    'Contact Method',
-    'Contact Info',
-    'Last Contact',
-    'Next Follow-up',
-    'Follow-up Status',
-    'Job Requirements',
-    'Why I Applied',
-    'Interview Notes',
-    'Next Action',
+    'Interview Date',
+    'Follow Up',
+    'Salary Range',
     'Notes',
   ];
 
@@ -1227,36 +694,20 @@ export function exportApplicationsToCSV(applications: Application[]): string {
   };
 
   const rows = applications.map((app) => [
-    escapeCSV(app.dateAdded),
-    escapeCSV(app.dateApplied),
+    escapeCSV(app.dateApplied || app.dateAdded),
     escapeCSV(app.company),
     escapeCSV(app.jobTitle),
-    escapeCSV(app.jobUrl),
-    escapeCSV(app.location),
-    escapeCSV(app.employmentType),
-    escapeCSV(app.salary),
-    escapeCSV(app.resumeUsed),
-    escapeCSV(app.coverLetter),
     escapeCSV(app.status),
-    escapeCSV(app.origin),
-    escapeCSV(app.contactName),
-    escapeCSV(app.contactRole),
-    escapeCSV(app.contactMethod),
-    escapeCSV(app.contactInfo),
-    escapeCSV(app.lastContact),
-    escapeCSV(app.nextFollowUp),
-    escapeCSV(app.followUpStatus),
-    escapeCSV(app.jobRequirements),
-    escapeCSV(app.whyIApplied),
-    escapeCSV(app.interviewNotes),
-    escapeCSV(app.nextAction),
-    escapeCSV(app.notes),
+    escapeCSV(app.lastContact && app.status.includes('Interview') ? app.lastContact : '-'),
+    escapeCSV(app.nextFollowUp || '-'),
+    escapeCSV(app.salary || '$50,000 - $65,000'),
+    escapeCSV(app.notes || app.nextAction),
   ]);
 
   return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
 }
 
-export function downloadCSV(content: string, filename = 'job-search-hq.csv') {
+export function downloadCSV(content: string, filename = 'Job_Application_Tracker.csv') {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

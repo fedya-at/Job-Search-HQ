@@ -402,7 +402,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDF9F0] text-[#003049] flex flex-col font-sans selection:bg-[#FDF0D5] selection:text-[#780000]">
+    <div className="min-h-screen bg-white text-[#003049] flex flex-col font-sans selection:bg-[#FDF0D5] selection:text-[#780000]">
       {/* 1. Universal Top Header & Navigation */}
       <Header
         currentTab={currentTab}
