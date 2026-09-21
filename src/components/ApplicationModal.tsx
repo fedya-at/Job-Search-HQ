@@ -16,8 +16,13 @@ import {
   Download,
   Clipboard,
   FileCheck,
+  Wand2,
+  ClipboardPaste,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { Application, ApplicationStatus, ApplicationOrigin, DataLists } from '../types';
+import { parseJobOfferText } from '../utils/jobOfferParser';
 import {
   daysBetween,
   daysUntil,
@@ -84,6 +89,96 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
   const [nextAction, setNextAction] = useState('Wait for response');
   const [notes, setNotes] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Smart Job Offer & Description Paste Parser State
+  const [showPasteBox, setShowPasteBox] = useState(!application);
+  const [pastedOfferText, setPastedOfferText] = useState('');
+  const [extractSuccessInfo, setExtractSuccessInfo] = useState<{
+    count: number;
+    fields: string[];
+    company?: string;
+    jobTitle?: string;
+  } | null>(null);
+
+  const handleExtractJobOffer = (textToParse?: string) => {
+    const text = (textToParse !== undefined ? textToParse : pastedOfferText).trim();
+    if (!text) return;
+
+    const extracted = parseJobOfferText(text);
+    const populatedFields: string[] = [];
+
+    if (extracted.company && extracted.company !== 'Company Name') {
+      setCompany(extracted.company);
+      populatedFields.push('Company');
+    }
+    if (extracted.jobTitle && extracted.jobTitle !== 'Job Title / Position') {
+      setJobTitle(extracted.jobTitle);
+      populatedFields.push('Job Title');
+    }
+    if (extracted.location) {
+      setLocation(extracted.location);
+      populatedFields.push('Location');
+    }
+    if (extracted.employmentType) {
+      setEmploymentType(extracted.employmentType);
+      populatedFields.push('Type');
+    }
+    if (extracted.salary) {
+      setSalary(extracted.salary);
+      populatedFields.push('Salary');
+    }
+    if (extracted.jobUrl) {
+      setJobUrl(extracted.jobUrl);
+      populatedFields.push('Job Link');
+    }
+    if (extracted.origin) {
+      setOrigin(extracted.origin);
+      populatedFields.push('Source');
+    }
+    if (extracted.roleCategory) {
+      setRoleCategory(extracted.roleCategory);
+      populatedFields.push('Role Category');
+    }
+    if (extracted.contactName) {
+      setContactName(extracted.contactName);
+      populatedFields.push('Contact Name');
+    }
+    if (extracted.contactInfo) {
+      setContactInfo(extracted.contactInfo);
+      populatedFields.push('Contact Email');
+    }
+    if (extracted.jobRequirements) {
+      setJobRequirements(extracted.jobRequirements);
+      populatedFields.push('Requirements');
+    }
+    if (extracted.notes) {
+      setNotes((prev) =>
+        prev
+          ? `${prev}\n\n--- Extracted Job Description ---\n${extracted.notes}`
+          : extracted.notes || ''
+      );
+      populatedFields.push('Full Description');
+    }
+
+    setExtractSuccessInfo({
+      count: populatedFields.length,
+      fields: populatedFields,
+      company: extracted.company !== 'Company Name' ? extracted.company : undefined,
+      jobTitle: extracted.jobTitle !== 'Job Title / Position' ? extracted.jobTitle : undefined,
+    });
+  };
+
+  const handleClipboardPasteAndExtract = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text && text.trim()) {
+        setPastedOfferText(text);
+        handleExtractJobOffer(text);
+      }
+    } catch (e) {
+      console.warn('Could not read from clipboard:', e);
+    }
+  };
 
   useEffect(() => {
     if (application) {
@@ -309,6 +404,126 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="overflow-y-auto p-5 sm:p-7 space-y-6 flex-1 text-xs">
+          {/* SMART JOB OFFER AUTO-FILL & EXTRACTION SECTION */}
+          <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-[#780000] rounded-2xl p-4 sm:p-5 text-white shadow-md border border-slate-800 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-white/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-rose-500 flex items-center justify-center text-slate-950 font-bold shadow-xs shrink-0">
+                  <Wand2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-sm text-white tracking-wide">
+                      Smart Auto-Fill from Job Offer / Post
+                    </h4>
+                    <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-amber-200 uppercase tracking-wider">
+                      Auto-Extract
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300">
+                    Paste any job post copied from LinkedIn, Indeed, emails, or job boards to extract details instantly.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleClipboardPasteAndExtract}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 active:bg-white/30 text-white font-semibold text-xs transition-colors border border-white/20 cursor-pointer shadow-2xs"
+                  title="Paste directly from your system clipboard and auto-fill"
+                >
+                  <ClipboardPaste className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Paste & Extract</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPasteBox(!showPasteBox)}
+                  className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  title={showPasteBox ? 'Collapse Paste Box' : 'Expand Paste Box'}
+                >
+                  {showPasteBox ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Expandable Textarea & Action Bar */}
+            {showPasteBox && (
+              <div className="space-y-3 pt-1 animate-in fade-in duration-200">
+                <div className="relative">
+                  <textarea
+                    rows={4}
+                    value={pastedOfferText}
+                    onChange={(e) => {
+                      setPastedOfferText(e.target.value);
+                      if (extractSuccessInfo) setExtractSuccessInfo(null);
+                    }}
+                    placeholder="Paste your copied job offer or description here...&#10;&#10;Example:&#10;Senior Full Stack Engineer at Stripe&#10;Location: Remote / San Francisco, CA&#10;Salary: $140,000 - $180,000 / year • Full-time&#10;https://www.linkedin.com/jobs/view/12345678"
+                    className="w-full p-3 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all font-sans leading-relaxed"
+                  />
+                  {pastedOfferText && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPastedOfferText('');
+                        setExtractSuccessInfo(null);
+                      }}
+                      className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/40 hover:bg-black/60 text-[10px] text-slate-300 hover:text-white font-medium transition-colors cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={!pastedOfferText.trim()}
+                      onClick={() => handleExtractJobOffer()}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-red-600 hover:from-amber-600 hover:to-red-700 text-white font-bold text-xs shadow-md shadow-rose-900/30 active:scale-98 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+                      <span>✨ Extract & Auto-Fill All Details</span>
+                    </button>
+                  </div>
+
+                  <span className="text-[11px] text-slate-400">
+                    Extracts Company, Title, Location, Salary, Link, Source, and Requirements
+                  </span>
+                </div>
+
+                {/* Extraction Success Pill Banner */}
+                {extractSuccessInfo && extractSuccessInfo.count > 0 && (
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs animate-in slide-in-from-top-1 duration-200">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="font-bold text-white flex items-center gap-2">
+                        <span>
+                          🎉 Successfully extracted {extractSuccessInfo.count} fields from job post!
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {extractSuccessInfo.fields.map((field) => (
+                          <span
+                            key={field}
+                            className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-semibold text-[10px] border border-emerald-500/30"
+                          >
+                            ✓ {field}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* SECTION 1: JOB INFORMATION */}
           <div>
             <h4 className="font-bold text-sm text-[#003049] mb-3 pb-1 border-b border-gray-100 flex items-center gap-2">
