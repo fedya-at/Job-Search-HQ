@@ -160,87 +160,101 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
           {/* Total Applications */}
-          <div className="bg-[#FFFDF9] rounded-2xl p-4 border border-[#EEDFCA] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#003049]/70 mb-2">
-              <span className="text-xs font-medium">Total Applications</span>
-              <Briefcase className="w-3.5 h-3.5 text-[#003049]" />
+          <div className="bg-gradient-to-br from-blue-50/90 via-white to-indigo-50/50 rounded-2xl p-4 border border-blue-200/80 shadow-2xs hover:shadow-xs hover:border-blue-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-blue-950">Total</span>
+              <div className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                <Briefcase className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#003049]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-blue-950">
               {kpis.total}
             </div>
-            <p className="text-[11px] text-[#003049]/60 mt-1">Full database</p>
+            <p className="text-[11px] font-medium text-blue-800/80 mt-1">Full database</p>
           </div>
 
           {/* Applied This Week */}
-          <div className="bg-[#FFFDF9] rounded-2xl p-4 border border-[#C6DCED] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#003049]/70 mb-2">
-              <span className="text-xs font-medium">Applied This Week</span>
-              <Calendar className="w-3.5 h-3.5 text-[#669bbc]" />
+          <div className="bg-gradient-to-br from-cyan-50/90 via-white to-sky-50/50 rounded-2xl p-4 border border-cyan-200/80 shadow-2xs hover:shadow-xs hover:border-cyan-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-cyan-950">This Week</span>
+              <div className="w-7 h-7 rounded-xl bg-cyan-600 text-white flex items-center justify-center shadow-xs">
+                <Calendar className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#003049]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-cyan-950">
               {kpis.appliedThisWeek}
             </div>
-            <p className="text-[11px] text-[#003049]/60 mt-1">Past 7 days velocity</p>
+            <p className="text-[11px] font-medium text-cyan-800/80 mt-1">Past 7 days</p>
           </div>
 
           {/* Active Interviews */}
-          <div className="bg-[#FFFDF9] rounded-2xl p-4 border border-[#BED2E2] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#003049]/70 mb-2">
-              <span className="text-xs font-medium">Interviews</span>
-              <Sparkles className="w-3.5 h-3.5 text-[#003049]" />
+          <div className="bg-gradient-to-br from-purple-50/90 via-white to-fuchsia-50/50 rounded-2xl p-4 border border-purple-200/80 shadow-2xs hover:shadow-xs hover:border-purple-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-purple-950">Interviews</span>
+              <div className="w-7 h-7 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
+                <Sparkles className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#003049]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-purple-950">
               {kpis.interviews}
             </div>
-            <p className="text-[11px] text-[#003049]/60 mt-1">Active interview stages</p>
+            <p className="text-[11px] font-medium text-purple-800/80 mt-1">Active rounds</p>
           </div>
 
           {/* Offers */}
-          <div className="bg-[#FDF5F6] rounded-2xl p-4 border border-[#F8C8CB] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#780000] mb-2">
-              <span className="text-xs font-medium">Offers</span>
-              <Award className="w-3.5 h-3.5 text-[#780000]" />
+          <div className="bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50 rounded-2xl p-4 border border-emerald-200/80 shadow-2xs hover:shadow-xs hover:border-emerald-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-emerald-950">Offers</span>
+              <div className="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                <Award className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#780000]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-emerald-950">
               {kpis.offers}
             </div>
-            <p className="text-[11px] text-[#780000]/70 mt-1">Offers & Accepted</p>
+            <p className="text-[11px] font-medium text-emerald-800/80 mt-1">Offers & Wins</p>
           </div>
 
           {/* Awaiting Response */}
-          <div className="bg-[#FDF9F0] rounded-2xl p-4 border border-[#F1E3C8] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#003049]/70 mb-2">
-              <span className="text-xs font-medium">Awaiting Response</span>
-              <Clock className="w-3.5 h-3.5 text-[#003049]" />
+          <div className="bg-gradient-to-br from-amber-50/90 via-white to-yellow-50/50 rounded-2xl p-4 border border-amber-200/80 shadow-2xs hover:shadow-xs hover:border-amber-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-amber-950">Pending</span>
+              <div className="w-7 h-7 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                <Clock className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#003049]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-amber-950">
               {kpis.awaitingResponse}
             </div>
-            <p className="text-[11px] text-[#003049]/60 mt-1">Pending review</p>
+            <p className="text-[11px] font-medium text-amber-800/80 mt-1">Awaiting reply</p>
           </div>
 
           {/* Rejected */}
-          <div className="bg-[#FDF5F6] rounded-2xl p-4 border border-[#F9CFD3] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#c1121f] mb-2">
-              <span className="text-xs font-medium">Rejected</span>
-              <XCircle className="w-3.5 h-3.5 text-[#c1121f]" />
+          <div className="bg-gradient-to-br from-rose-50/90 via-white to-pink-50/50 rounded-2xl p-4 border border-rose-200/80 shadow-2xs hover:shadow-xs hover:border-rose-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-rose-950">Rejected</span>
+              <div className="w-7 h-7 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-xs">
+                <XCircle className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#c1121f]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-rose-950">
               {kpis.rejected}
             </div>
-            <p className="text-[11px] text-[#c1121f]/70 mt-1">Closed out</p>
+            <p className="text-[11px] font-medium text-rose-800/80 mt-1">Closed out</p>
           </div>
 
           {/* Response Rate */}
-          <div className="bg-[#EBF3F8]/30 rounded-2xl p-4 border border-[#C6DCED] shadow-2xs hover:shadow-xs transition-shadow">
-            <div className="flex items-center justify-between text-[#003049]/80 mb-2">
-              <span className="text-xs font-medium">Response Rate</span>
-              <TrendingUp className="w-3.5 h-3.5 text-[#669bbc]" />
+          <div className="bg-gradient-to-br from-violet-50/90 via-white to-indigo-50/50 rounded-2xl p-4 border border-violet-200/80 shadow-2xs hover:shadow-xs hover:border-violet-400 transition-all">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-violet-950">Reply Rate</span>
+              <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                <TrendingUp className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#003049]">
+            <div className="text-2xl sm:text-3xl font-serif font-bold text-violet-950">
               {kpis.responseRate}%
             </div>
-            <p className="text-[11px] text-[#003049]/60 mt-1">Of submitted roles</p>
+            <p className="text-[11px] font-medium text-violet-800/80 mt-1">Conversion %</p>
           </div>
         </div>
       </section>

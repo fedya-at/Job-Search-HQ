@@ -19,6 +19,7 @@ import {
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
+  LogIn,
 } from 'lucide-react';
 import { SheetTab, ApplicationStatus } from '../types';
 import { STATUS_COLORS } from '../utils/calculations';
@@ -64,18 +65,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [showLegendModal, setShowLegendModal] = useState(false);
 
-  const navItems: { id: SheetTab; label: string; icon: React.ElementType; badge?: number }[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'applications', label: 'Applications', icon: TableProperties },
+  const navItems: { id: SheetTab; label: string; icon: React.ElementType; iconColor: string; badge?: number }[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, iconColor: 'text-indigo-600' },
+    { id: 'applications', label: 'Applications', icon: TableProperties, iconColor: 'text-blue-600' },
     {
       id: 'followup',
       label: 'Follow-Up',
       icon: Clock,
+      iconColor: 'text-amber-600',
       badge: overdueCount + todayCount > 0 ? overdueCount + todayCount : undefined,
     },
-    { id: 'resumes', label: 'Resume Library', icon: FileText },
-    { id: 'analytics', label: 'Insights & KPIs', icon: BarChart3 },
-    { id: 'lists', label: 'Lists & Rules', icon: SlidersHorizontal },
+    { id: 'resumes', label: 'Resume Library', icon: FileText, iconColor: 'text-teal-600' },
+    { id: 'analytics', label: 'Insights & KPIs', icon: BarChart3, iconColor: 'text-purple-600' },
+    { id: 'lists', label: 'Lists & Rules', icon: SlidersHorizontal, iconColor: 'text-rose-600' },
   ];
 
   const sidebarContent = (
@@ -91,16 +93,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           title="Job Search HQ"
         >
           {isCollapsed ? (
-            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-serif font-bold text-base shadow-xs group-hover:bg-[#780000] transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#780000] to-[#c1121f] text-white flex items-center justify-center font-serif font-bold text-base shadow-sm group-hover:scale-105 transition-transform">
               HQ
             </div>
           ) : (
             <div>
-              <h1 className="text-2xl font-serif text-slate-900 tracking-tight font-bold group-hover:text-[#780000] transition-colors flex items-center gap-1.5">
+              <h1 className="text-2xl font-serif text-slate-950 tracking-tight font-bold group-hover:text-[#780000] transition-colors flex items-center gap-1.5">
                 <span>Job Search HQ</span>
-                <span className="text-sm font-sans text-[#780000]">♡</span>
+                <span className="text-sm font-sans text-[#c1121f]">♥</span>
               </h1>
-              <p className="text-[11px] text-slate-600 font-medium tracking-wider mt-0.5">
+              <p className="text-[11px] text-slate-500 font-semibold tracking-wider mt-0.5">
                 Career Command Center
               </p>
             </div>
@@ -141,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onOpenAddModal();
             if (onCloseMobile) onCloseMobile();
           }}
-          className={`flex items-center justify-center rounded-xl bg-[#780000] hover:bg-[#c1121f] active:bg-[#600000] text-white font-bold shadow-xs transition-all cursor-pointer ${
+          className={`flex items-center justify-center rounded-xl bg-gradient-to-r from-[#780000] via-[#a80e1b] to-[#c1121f] hover:from-[#900000] hover:to-[#d01826] text-white font-bold shadow-md shadow-red-900/20 hover:shadow-lg hover:shadow-red-900/30 active:scale-98 transition-all cursor-pointer ${
             isCollapsed ? 'w-11 h-11 p-0' : 'w-full py-2.5 px-4 gap-2 text-xs'
           }`}
           title="Add New Job Application"
@@ -154,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* 3. Navigation Links */}
       <div className="flex-1 px-2.5 py-2 space-y-1 overflow-y-auto">
         {!isCollapsed && (
-          <div className="px-3 pb-1.5 text-[10px] font-bold text-slate-600 tracking-wider uppercase">
+          <div className="px-3 pb-1.5 text-[10px] font-bold text-slate-400 tracking-wider uppercase">
             Navigation
           </div>
         )}
@@ -176,18 +178,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   : 'justify-between px-3.5 py-2.5'
               } ${
                 isActive
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-800 hover:text-slate-950 hover:bg-slate-100'
+                  ? 'bg-slate-950 text-white shadow-xs'
+                  : 'text-slate-800 hover:text-slate-950 hover:bg-slate-100/80'
               }`}
               title={isCollapsed ? item.label : undefined}
             >
               <div className="flex items-center gap-3 relative">
                 <Icon
-                  className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-700'}`}
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    isActive ? 'text-white' : item.iconColor
+                  }`}
                 />
                 {!isCollapsed && <span>{item.label}</span>}
                 {isCollapsed && item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 px-1 rounded-full text-[9px] font-bold bg-[#c1121f] text-white">
+                  <span className="absolute -top-1.5 -right-2 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-xs animate-pulse">
                     {item.badge}
                   </span>
                 )}
@@ -195,8 +199,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
               {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
                 <span
-                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                    isActive ? 'bg-[#c1121f] text-white' : 'bg-red-100 text-red-800'
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    isActive
+                      ? 'bg-rose-500 text-white'
+                      : 'bg-rose-100 text-rose-800'
                   }`}
                 >
                   {item.badge}
@@ -329,17 +335,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onSignIn && (
             <button
               onClick={onSignIn}
-              className={`flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-900 transition-all shadow-2xs cursor-pointer ${
+              className={`flex items-center justify-center rounded-xl bg-slate-900 hover:bg-[#780000] text-white text-xs font-bold transition-all shadow-xs cursor-pointer ${
                 isCollapsed ? 'w-10 h-10 p-0 mx-auto' : 'w-full py-2.5 px-3 gap-2'
               }`}
-              title="Sign In with Google"
+              title="Sign In or Register"
             >
-              <img
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                alt="Google"
-                className="w-4 h-4 shrink-0"
-              />
-              {!isCollapsed && <span>Sign In</span>}
+              <LogIn className="w-4 h-4 shrink-0 text-white" />
+              {!isCollapsed && <span>Sign In / Register</span>}
             </button>
           )
         )}

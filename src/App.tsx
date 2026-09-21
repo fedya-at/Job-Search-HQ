@@ -31,6 +31,7 @@ import { AnalyticsView } from './components/AnalyticsView';
 import { ListsSettingsView } from './components/ListsSettingsView';
 import { ApplicationModal } from './components/ApplicationModal';
 import { PopupBlockedModal } from './components/PopupBlockedModal';
+import { AuthModal } from './components/AuthModal';
 import {
   googleSignIn,
   logout,
@@ -72,6 +73,7 @@ export default function App() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [showPopupBlockedModal, setShowPopupBlockedModal] = useState(false);
 
@@ -393,7 +395,7 @@ export default function App() {
         todayCount={todayCount}
         googleSheetUrl={createdSheetUrl}
         user={user}
-        onSignIn={handleGoogleSignIn}
+        onSignIn={() => setIsAuthModalOpen(true)}
         onSignOut={handleSignOut}
         isOpenMobile={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
@@ -428,16 +430,16 @@ export default function App() {
                 <div>
                   <p className="font-bold text-sm text-[#003049]">Private & Secure Career Tracker</p>
                   <p className="text-gray-500">
-                    Sign in with Google to save your personal job applications, attached CV files, and cover letters securely to your account.
+                    Sign in with email/password or Google to save your personal job applications, attached CV files, and cover letters securely to your account.
                   </p>
                 </div>
               </div>
               <button
-                onClick={() => handleGoogleSignIn()}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#003049] hover:bg-[#002035] text-white font-semibold transition-all shadow-xs shrink-0 cursor-pointer"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#003049] hover:bg-[#780000] text-white font-semibold transition-all shadow-xs shrink-0 cursor-pointer"
               >
                 <LogIn className="w-3.5 h-3.5" />
-                <span>Sign In with Google</span>
+                <span>Sign In / Register</span>
               </button>
             </div>
           </div>
@@ -583,6 +585,19 @@ export default function App() {
         onClose={() => setShowPopupBlockedModal(false)}
         onRetry={() => handleGoogleSignIn(true)}
         onExportCsv={handleExportCSV}
+      />
+
+      {/* Unified Authentication Modal (Email/Password & Google) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onFallbackPopupBlocked={() => setShowPopupBlockedModal(true)}
+        onSuccess={() => {
+          setToastMessage({
+            type: 'success',
+            text: 'Welcome! Your secure career workspace has been loaded.',
+          });
+        }}
       />
     </div>
   );
